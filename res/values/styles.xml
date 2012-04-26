@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <style name="BackgroundColorListPontos">
+        <item name="android:background">#0099CC</item>
+    </style>
+    <style name="NomeOnibusApparence">
+        <item name="android:paddingLeft">6dp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">@dimen/tamanho_letra_do_ponto</item>
+    </style>
+    
+    <style name="DistanciaOnibusApparence">
+        <item name="android:paddingLeft">6dp</item>
+        <item name="android:textColor">@android:color/background_light</item>
+        <item name="android:textSize">@dimen/tamanho_letra_da_distancia</item>
+    </style>
+</resources>

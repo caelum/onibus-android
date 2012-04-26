@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="height_text_ponto">48dp</dimen>
+    <dimen name="tamanho_letra_do_ponto">16sp</dimen>
+    <dimen name="tamanho_letra_da_distancia">12sp</dimen>
+</resources>

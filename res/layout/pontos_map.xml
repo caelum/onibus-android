@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <com.google.android.maps.MapView
+        android:id="@+id/map_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:apiKey="@string/google_maps_key"
+        android:clickable="true"
+        android:enabled="true" android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/atualiza_mapa"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@id/map_view"
+        android:layout_margin="15dp"
+        android:background="@drawable/ic_local"
+        android:onClick="atualizarMapa" android:visibility="gone" />
+
+    <include
+        android:id="@+id/progress_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        layout="@layout/progress_bar" />
+
+</RelativeLayout>
