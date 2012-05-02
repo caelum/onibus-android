@@ -17,6 +17,7 @@ import br.com.caelum.ondeestaobusao.model.Coordenada;
 import br.com.caelum.ondeestaobusao.model.Onibus;
 import br.com.caelum.ondeestaobusao.model.Ponto;
 import br.com.caelum.ondeestaobusao.task.AsyncResultDealer;
+import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
 
 public class ListPontosAndOnibusActivity extends Activity implements AsyncResultDealer<List<Ponto>> {
 	private ExpandableListView lvPontos;
@@ -82,6 +83,16 @@ public class ListPontosAndOnibusActivity extends Activity implements AsyncResult
 		}
 
 		return super.onMenuItemSelected(featureId, item);
+	}
+	
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		if (this.atual != null) {
+			MenuItem item = menu.findItem(R.id.procura_no_mapa);
+			item.setEnabled(true);
+		}
+		
+		return super.onPrepareOptionsMenu(menu);
 	}
 
 	private void atualizar() {
