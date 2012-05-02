@@ -14,6 +14,7 @@ import br.com.caelum.ondeestaobusao.model.Ponto;
 import br.com.caelum.ondeestaobusao.task.AsyncResultDealer;
 import br.com.caelum.ondeestaobusao.task.GetJsonAsyncTask;
 import br.com.caelum.ondeestaobusao.task.PontosEOnibusResolver;
+import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -51,7 +52,7 @@ public class MostraPontosActivity extends MapActivity implements AsyncResultDeal
 	private void atualizaLocalizacaoPontos(Coordenada minhaLocalizacao) {
 		findViewById(R.id.progress_bar).setVisibility(View.VISIBLE);
 		mapView.setVisibility(View.GONE);
-		
+
 		meuPontoOverlay.clear();
 
 		meuPontoOverlay.addOverlay(new OverlayItemConverter(getBaseContext()).convert(minhaLocalizacao));
@@ -63,7 +64,7 @@ public class MostraPontosActivity extends MapActivity implements AsyncResultDeal
 
 	private void inicializaAtributos() {
 		atualizaMapa = findViewById(R.id.atualiza_mapa);
-		
+
 		mapView = (MapView) findViewById(R.id.map_view);
 		overlays = mapView.getOverlays();
 		mapController = mapView.getController();
@@ -80,7 +81,7 @@ public class MostraPontosActivity extends MapActivity implements AsyncResultDeal
 	public void dealWithResult(List<Ponto> pontos) {
 		overlays.clear();
 		pontoOverlay.clear();
-		
+
 		for (Ponto ponto : pontos) {
 			pontoOverlay.addOverlay(new PontoOverlayItem(ponto));
 		}
@@ -98,6 +99,11 @@ public class MostraPontosActivity extends MapActivity implements AsyncResultDeal
 		v.setVisibility(View.GONE);
 		GeoPoint p = mapView.getMapCenter();
 		atualizaLocalizacaoPontos(new Coordenada(p));
+	}
+
+	@Override
+	public void dealWithError() {
+		new AlertDialogBuilder(this).build().show();		
 	}
 
 }

@@ -13,6 +13,7 @@ import br.com.caelum.ondeestaobusao.model.Ponto;
 import br.com.caelum.ondeestaobusao.task.AsyncResultDealer;
 import br.com.caelum.ondeestaobusao.task.GetJsonAsyncTask;
 import br.com.caelum.ondeestaobusao.task.PontosDoOnibusResolver;
+import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
 
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
@@ -78,9 +79,8 @@ public class MostraRotaActivity extends MapActivity implements AsyncResultDealer
 		overlays.add(myLocationOverlay);
 
 		for (Ponto ponto : pontos) {
-			pontoOverlay.addOverlay(
-				new OverlayItem(ponto.getCoordenada().toGeoPoint(),
-					"Localização do ponto:", ponto.getDescricao()));
+			pontoOverlay.addOverlay(new OverlayItem(ponto.getCoordenada().toGeoPoint(), "Localização do ponto:", ponto
+					.getDescricao()));
 		}
 		overlays.add(pontoOverlay);
 
@@ -88,5 +88,10 @@ public class MostraRotaActivity extends MapActivity implements AsyncResultDealer
 
 		mapView.setVisibility(View.VISIBLE);
 		findViewById(R.id.progress_bar).setVisibility(View.GONE);
+	}
+
+	@Override
+	public void dealWithError() {
+		new AlertDialogBuilder(this).build().show();		
 	}
 }

@@ -25,7 +25,7 @@ public class GPSControl {
 	public GPSControl(ListPontosAndOnibusActivity activity) {
 		this.activity = activity;
 		this.locationListener = createLocationListener();
-		
+
 	}
 
 	private LocationListener createLocationListener() {
@@ -48,7 +48,7 @@ public class GPSControl {
 
 	public void execute() {
 		LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
-		
+
 		if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			Log.i("Provider", "GPS");
 			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME, DISTANCE, locationListener);

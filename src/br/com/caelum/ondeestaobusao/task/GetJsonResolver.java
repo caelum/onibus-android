@@ -9,4 +9,8 @@ public interface GetJsonResolver<Params, Result> {
 	String getFormatedURL(Params... params);
 	
 	Type getElementType();
+	
+	void doOnError(Exception e);
+	
+	Result onErrorReturn();
 }

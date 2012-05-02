@@ -5,4 +5,6 @@ public interface AsyncResultDealer <T> {
 	
 	public void dealWithResult(T result);
 	
+	public void dealWithError();
+	
 }

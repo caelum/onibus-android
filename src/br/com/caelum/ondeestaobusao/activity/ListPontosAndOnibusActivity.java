@@ -107,4 +107,9 @@ public class ListPontosAndOnibusActivity extends Activity implements AsyncResult
 	public void setAtual(Coordenada atual) {
 		this.atual = atual;
 	}
+
+	@Override
+	public void dealWithError() {
+		new AlertDialogBuilder(this).build().show();
+	}
 }
