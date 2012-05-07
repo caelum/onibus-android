@@ -50,12 +50,15 @@ public class MostraPontosActivity extends MapActivity implements AsyncResultDeal
 	}
 
 	private void atualizaLocalizacaoPontos(Coordenada minhaLocalizacao) {
-		findViewById(R.id.progress_bar).setVisibility(View.VISIBLE);
-		mapView.setVisibility(View.GONE);
+		View progressBar = findViewById(R.id.progress_bar);
+		progressBar.setVisibility(View.VISIBLE);
+		progressBar.getBackground().setAlpha(180);
 
+		mapView.setClickable(false);
+		
 		meuPontoOverlay.clear();
-
 		meuPontoOverlay.addOverlay(new OverlayItemConverter(getBaseContext()).convert(minhaLocalizacao));
+		
 		mapController.setCenter(minhaLocalizacao.toGeoPoint());
 		mapController.animateTo(minhaLocalizacao.toGeoPoint());
 
@@ -91,6 +94,8 @@ public class MostraPontosActivity extends MapActivity implements AsyncResultDeal
 
 		mapView.invalidate();
 		mapView.setVisibility(View.VISIBLE);
+		mapView.setClickable(true);
+		
 		atualizaMapa.setVisibility(View.VISIBLE);
 		findViewById(R.id.progress_bar).setVisibility(View.GONE);
 	}
