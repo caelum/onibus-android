@@ -3,6 +3,7 @@ package br.com.caelum.ondeestaobusao.activity;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -29,8 +30,21 @@ public class ListPontosAndOnibusActivity extends Activity implements AsyncResult
 		setContentView(R.layout.list_ponto);
 
 		lvPontos = (ExpandableListView) findViewById(R.id.listPonto);
-
-		atualizar();
+		
+		handleIntent(getIntent());
+	}
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		handleIntent(intent);
+	}
+	
+	private void handleIntent(Intent intent) {
+		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String query = intent.getStringExtra(SearchManager.QUERY);
+        } else {
+    		atualizar();
+        }
 	}
 
 	public void dealWithResult(final List<Ponto> pontos) {
