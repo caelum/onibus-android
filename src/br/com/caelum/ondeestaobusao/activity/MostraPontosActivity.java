@@ -52,7 +52,6 @@ public class MostraPontosActivity extends MapActivity implements AsyncResultDeal
 	private void atualizaLocalizacaoPontos(Coordenada minhaLocalizacao) {
 		View progressBar = findViewById(R.id.progress_bar);
 		progressBar.setVisibility(View.VISIBLE);
-		progressBar.getBackground().setAlpha(180);
 
 		mapView.setClickable(false);
 		

@@ -13,6 +13,8 @@
         android:id="@+id/listPonto"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:divider="@android:color/black"
+        android:childDivider="@android:color/white"
         android:visibility="gone" />
 
     <include
