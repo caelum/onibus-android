@@ -5,15 +5,15 @@ import java.util.List;
 import android.os.Bundle;
 import android.view.View;
 import br.com.caelum.ondeestaobusao.constants.Extras;
+import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
 import br.com.caelum.ondeestaobusao.map.OverlayItemConverter;
 import br.com.caelum.ondeestaobusao.map.PontoClickOverlay;
 import br.com.caelum.ondeestaobusao.map.PontoOverlay;
 import br.com.caelum.ondeestaobusao.map.PontoOverlayItem;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
 import br.com.caelum.ondeestaobusao.model.Ponto;
-import br.com.caelum.ondeestaobusao.task.AsyncResultDealer;
 import br.com.caelum.ondeestaobusao.task.GetJsonAsyncTask;
-import br.com.caelum.ondeestaobusao.task.PontosEOnibusResolver;
+import br.com.caelum.ondeestaobusao.task.PontosEOnibusTask;
 import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
 
 import com.google.android.maps.GeoPoint;
@@ -22,7 +22,7 @@ import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 
-public class MostraPontosActivity extends MapActivity implements AsyncResultDealer<List<Ponto>> {
+public class MostraPontosActivity extends MapActivity implements AsyncResultDelegate<List<Ponto>> {
 
 	private MapView mapView;
 	private List<Overlay> overlays;
@@ -36,7 +36,7 @@ public class MostraPontosActivity extends MapActivity implements AsyncResultDeal
 		super.onCreate(bundle);
 		setContentView(R.layout.pontos_map);
 
-		Coordenada minhaLocalizacao = (Coordenada) getIntent().getSerializableExtra(Extras.MINHA_LOCALIZACAO);
+		Coordenada minhaLocalizacao = (Coordenada) getIntent().getSerializableExtra(Extras.LOCALIZACAO);
 
 		inicializaAtributos();
 
@@ -61,7 +61,7 @@ public class MostraPontosActivity extends MapActivity implements AsyncResultDeal
 		mapController.setCenter(minhaLocalizacao.toGeoPoint());
 		mapController.animateTo(minhaLocalizacao.toGeoPoint());
 
-		new GetJsonAsyncTask<Coordenada, List<Ponto>>(new PontosEOnibusResolver(this)).execute(minhaLocalizacao);
+		new GetJsonAsyncTask<Coordenada, List<Ponto>>(new PontosEOnibusTask(this)).execute(minhaLocalizacao);
 	}
 
 	private void inicializaAtributos() {

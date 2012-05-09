@@ -43,7 +43,7 @@ public class ListOnibusActivity extends Activity {
 				
 				Intent intent = new Intent(ListOnibusActivity.this, MostraRotaActivity.class);
 				intent.putExtra(Extras.ONIBUS, onibus);
-				intent.putExtra(Extras.MINHA_LOCALIZACAO, ponto.getCoordenada());
+				intent.putExtra(Extras.LOCALIZACAO, ponto.getCoordenada());
 				
 				startActivity(intent);
 			}

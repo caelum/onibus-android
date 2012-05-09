@@ -13,16 +13,63 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import br.com.caelum.ondeestaobusao.adapter.PontosEOnibusAdapter;
 import br.com.caelum.ondeestaobusao.constants.Extras;
+import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
 import br.com.caelum.ondeestaobusao.gps.GPSControl;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
 import br.com.caelum.ondeestaobusao.model.Onibus;
 import br.com.caelum.ondeestaobusao.model.Ponto;
-import br.com.caelum.ondeestaobusao.task.AsyncResultDealer;
+import br.com.caelum.ondeestaobusao.task.CoordenadaDoEnderecoTask;
 import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
 
-public class ListPontosAndOnibusActivity extends Activity implements AsyncResultDealer<List<Ponto>> {
+
+
+public class ListPontosAndOnibusActivity extends Activity {
 	private ExpandableListView lvPontos;
 	private Coordenada atual;
+	
+	private AsyncResultDelegate<Coordenada> delegateCoordenada = new AsyncResultDelegate<Coordenada>() {
+		@Override
+		public void dealWithResult(Coordenada result) {
+			Intent intent = new Intent(ListPontosAndOnibusActivity.this, MostraPontosActivity.class);
+			intent.putExtra(Extras.LOCALIZACAO, result);
+			
+			startActivity(intent);
+		}
+		@Override
+		public void dealWithError() {
+			ListPontosAndOnibusActivity.this.dealWithError();
+		}
+	};
+	
+	private AsyncResultDelegate<List<Ponto>> delegatePontos = new AsyncResultDelegate<List<Ponto>>() {
+		@Override
+		public void dealWithResult(final List<Ponto> pontos) {
+			lvPontos.setAdapter(new PontosEOnibusAdapter(pontos, ListPontosAndOnibusActivity.this));
+
+			lvPontos.setOnChildClickListener(new OnChildClickListener() {
+				@Override
+				public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+
+					Onibus onibus = pontos.get(groupPosition).getOnibuses().get(childPosition);
+
+					Intent intent = new Intent(ListPontosAndOnibusActivity.this, MostraRotaActivity.class);
+					intent.putExtra(Extras.ONIBUS, onibus);
+					intent.putExtra(Extras.LOCALIZACAO, atual);
+
+					startActivity(intent);
+
+					return false;
+				}
+			});
+
+			hideProgressBar();
+		}
+		@Override
+		public void dealWithError() {
+			ListPontosAndOnibusActivity.this.dealWithError();
+		}
+	};
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -42,31 +89,10 @@ public class ListPontosAndOnibusActivity extends Activity implements AsyncResult
 	private void handleIntent(Intent intent) {
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
+            new CoordenadaDoEnderecoTask(getDelegateCoordenada()).execute(query);
         } else {
     		atualizar();
         }
-	}
-
-	public void dealWithResult(final List<Ponto> pontos) {
-		lvPontos.setAdapter(new PontosEOnibusAdapter(pontos, this));
-
-		lvPontos.setOnChildClickListener(new OnChildClickListener() {
-			@Override
-			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-
-				Onibus onibus = pontos.get(groupPosition).getOnibuses().get(childPosition);
-
-				Intent intent = new Intent(ListPontosAndOnibusActivity.this, MostraRotaActivity.class);
-				intent.putExtra(Extras.ONIBUS, onibus);
-				intent.putExtra(Extras.MINHA_LOCALIZACAO, atual);
-
-				startActivity(intent);
-
-				return false;
-			}
-		});
-
-		hideProgressBar();
 	}
 
 	private void hideProgressBar() {
@@ -90,7 +116,7 @@ public class ListPontosAndOnibusActivity extends Activity implements AsyncResult
 	public boolean onMenuItemSelected(int featureId, MenuItem item) {
 		if (item.getItemId() == R.id.procura_no_mapa) {
 			Intent intent = new Intent(ListPontosAndOnibusActivity.this, MostraPontosActivity.class);
-			intent.putExtra(Extras.MINHA_LOCALIZACAO, atual);
+			intent.putExtra(Extras.LOCALIZACAO, atual);
 
 			startActivity(intent);
 			return false;
@@ -122,8 +148,15 @@ public class ListPontosAndOnibusActivity extends Activity implements AsyncResult
 		this.atual = atual;
 	}
 
-	@Override
 	public void dealWithError() {
 		new AlertDialogBuilder(this).build().show();
+	}
+	
+	public AsyncResultDelegate<Coordenada> getDelegateCoordenada() {
+		return delegateCoordenada;
+	}
+	
+	public AsyncResultDelegate<List<Ponto>> getDelegatePontos() {
+		return delegatePontos;
 	}
 }

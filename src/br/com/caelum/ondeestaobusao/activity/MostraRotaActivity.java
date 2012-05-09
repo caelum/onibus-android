@@ -6,13 +6,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import br.com.caelum.ondeestaobusao.constants.Extras;
+import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
 import br.com.caelum.ondeestaobusao.map.PontoOverlay;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
 import br.com.caelum.ondeestaobusao.model.Onibus;
 import br.com.caelum.ondeestaobusao.model.Ponto;
-import br.com.caelum.ondeestaobusao.task.AsyncResultDealer;
 import br.com.caelum.ondeestaobusao.task.GetJsonAsyncTask;
-import br.com.caelum.ondeestaobusao.task.PontosDoOnibusResolver;
+import br.com.caelum.ondeestaobusao.task.PontosDoOnibusTask;
 import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
 
 import com.google.android.maps.MapActivity;
@@ -22,7 +22,7 @@ import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
-public class MostraRotaActivity extends MapActivity implements AsyncResultDealer<List<Ponto>> {
+public class MostraRotaActivity extends MapActivity implements AsyncResultDelegate<List<Ponto>> {
 
 	private MapView mapView;
 	private List<Overlay> overlays;
@@ -36,7 +36,7 @@ public class MostraRotaActivity extends MapActivity implements AsyncResultDealer
 		super.onCreate(bundle);
 		setContentView(R.layout.mapa);
 
-		Coordenada minhaLocalizacao = (Coordenada) getIntent().getSerializableExtra(Extras.MINHA_LOCALIZACAO);
+		Coordenada minhaLocalizacao = (Coordenada) getIntent().getSerializableExtra(Extras.LOCALIZACAO);
 		Onibus onibus = (Onibus) getIntent().getSerializableExtra(Extras.ONIBUS);
 
 		inicializaAtributos();
@@ -54,7 +54,7 @@ public class MostraRotaActivity extends MapActivity implements AsyncResultDealer
 		mapController.setCenter(minhaLocalizacao.toGeoPoint());
 		mapController.animateTo(minhaLocalizacao.toGeoPoint());
 
-		new GetJsonAsyncTask<Long, List<Ponto>>(new PontosDoOnibusResolver(this)).execute(onibus.getId());
+		new GetJsonAsyncTask<Long, List<Ponto>>(new PontosDoOnibusTask(this)).execute(onibus.getId());
 	}
 
 	private void inicializaAtributos() {
