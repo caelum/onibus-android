@@ -26,6 +26,7 @@ import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
 public class ListPontosAndOnibusActivity extends Activity {
 	private ExpandableListView lvPontos;
 	private Coordenada atual;
+	private GPSControl gps;
 	
 	private AsyncResultDelegate<Coordenada> delegateCoordenada = new AsyncResultDelegate<Coordenada>() {
 		@Override
@@ -75,7 +76,8 @@ public class ListPontosAndOnibusActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.list_ponto);
-
+		
+		gps = new GPSControl(this);
 		lvPontos = (ExpandableListView) findViewById(R.id.listPonto);
 		
 		handleIntent(getIntent());
@@ -134,9 +136,15 @@ public class ListPontosAndOnibusActivity extends Activity {
 		
 		return super.onPrepareOptionsMenu(menu);
 	}
-
+	
+	@Override
+	public void finish() {
+		gps.shutdown();
+		super.finish();
+	}
+	
 	private void atualizar() {
-		new GPSControl(this).execute();
+		gps.execute();
 	}
 
 	@Override
