@@ -122,6 +122,9 @@ public class ListPontosAndOnibusActivity extends Activity {
 
 			startActivity(intent);
 			return false;
+		} else if (item.getItemId() == R.id.search) {
+			onSearchRequested();
+			return true;
 		}
 
 		return super.onMenuItemSelected(featureId, item);
