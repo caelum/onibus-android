@@ -21,6 +21,7 @@ public class GPSControl {
 	private static final int DISTANCE = 5;
 	private final ListPontosAndOnibusActivity activity;
 	private LocationListener locationListener;
+	private LocationManager locationManager;
 
 	public GPSControl(ListPontosAndOnibusActivity activity) {
 		this.activity = activity;
@@ -47,7 +48,7 @@ public class GPSControl {
 	}
 
 	public void execute() {
-		LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+		locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
 
 		if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			Log.i("Provider", "GPS");
@@ -58,6 +59,10 @@ public class GPSControl {
 			Log.i("Provider", "NETWORK");
 			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TIME, DISTANCE, locationListener);
 		}
+	}
+	
+	public void shutdown() {
+		locationManager.removeUpdates(locationListener);
 	}
 
 	private Coordenada makeUseLocation(Location location) {
