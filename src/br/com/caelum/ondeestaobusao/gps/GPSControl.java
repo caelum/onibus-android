@@ -13,7 +13,7 @@ import br.com.caelum.ondeestaobusao.activity.ListPontosAndOnibusActivity;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
 import br.com.caelum.ondeestaobusao.model.Ponto;
 import br.com.caelum.ondeestaobusao.task.GetJsonAsyncTask;
-import br.com.caelum.ondeestaobusao.task.PontosEOnibusResolver;
+import br.com.caelum.ondeestaobusao.task.PontosEOnibusTask;
 
 public class GPSControl {
 
@@ -21,6 +21,7 @@ public class GPSControl {
 	private static final int DISTANCE = 5;
 	private final ListPontosAndOnibusActivity activity;
 	private LocationListener locationListener;
+	private LocationManager locationManager;
 
 	public GPSControl(ListPontosAndOnibusActivity activity) {
 		this.activity = activity;
@@ -47,7 +48,7 @@ public class GPSControl {
 	}
 
 	public void execute() {
-		LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
+		locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
 
 		if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			Log.i("Provider", "GPS");
@@ -59,12 +60,16 @@ public class GPSControl {
 			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TIME, DISTANCE, locationListener);
 		}
 	}
+	
+	public void shutdown() {
+		locationManager.removeUpdates(locationListener);
+	}
 
 	private Coordenada makeUseLocation(Location location) {
 		Coordenada coordenada = null;
 		if (location != null) {
 			coordenada = new Coordenada(location.getLatitude(), location.getLongitude());
-			new GetJsonAsyncTask<Coordenada, List<Ponto>>(new PontosEOnibusResolver(activity)).execute(coordenada);
+			new GetJsonAsyncTask<Coordenada, List<Ponto>>(new PontosEOnibusTask(activity.getDelegatePontos())).execute(coordenada);
 		} else {
 			Toast.makeText(activity, "Location not found", Toast.LENGTH_LONG).show();
 			activity.onBackPressed();

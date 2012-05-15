@@ -1,8 +1,8 @@
-package br.com.caelum.ondeestaobusao.task;
+package br.com.caelum.ondeestaobusao.delegate;
 
 import java.lang.reflect.Type;
 
-public interface GetJsonResolver<Params, Result> {
+public interface GetJsonDelegate<Params, Result> {
 	
 	void doOnPostExecute(Result result);
 	

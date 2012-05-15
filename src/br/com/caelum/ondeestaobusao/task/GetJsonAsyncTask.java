@@ -9,16 +9,17 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import android.os.AsyncTask;
+import br.com.caelum.ondeestaobusao.delegate.GetJsonDelegate;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class GetJsonAsyncTask<Params, Result> extends AsyncTask<Params, Void, Result> {
-	private final GetJsonResolver<Params, Result> resolver;
+	private final GetJsonDelegate<Params, Result> delegate;
 	private IOException exception;
 
-	public GetJsonAsyncTask(GetJsonResolver<Params, Result> resolver) {
-		this.resolver = resolver;
+	public GetJsonAsyncTask(GetJsonDelegate<Params, Result> delegate) {
+		this.delegate = delegate;
 	}
 
 	@Override
@@ -28,17 +29,17 @@ public class GetJsonAsyncTask<Params, Result> extends AsyncTask<Params, Void, Re
 			GsonBuilder builder = new GsonBuilder();
 			Gson gson = builder.create();
 			
-			return gson.fromJson(json, resolver.getElementType());
+			return gson.fromJson(json, delegate.getElementType());
 		} catch (IOException e) {
 			this.exception = e;
-			return resolver.onErrorReturn();
+			return delegate.onErrorReturn();
 		}
 	}
 
 	private String getJsonFromServer(Params... params) throws IOException {
 		HttpClient httpclient = new DefaultHttpClient();
 
-		HttpGet httpGet = new HttpGet(resolver.getFormatedURL(params));
+		HttpGet httpGet = new HttpGet(delegate.getFormatedURL(params));
 		HttpResponse response = httpclient.execute(httpGet);
 
 		return EntityUtils.toString(response.getEntity());
@@ -48,9 +49,9 @@ public class GetJsonAsyncTask<Params, Result> extends AsyncTask<Params, Void, Re
 	@Override
 	protected void onPostExecute(Result result) {
 		if (exception == null) {
-			resolver.doOnPostExecute(result);
+			delegate.doOnPostExecute(result);
 		} else {
-			resolver.doOnError(exception);
+			delegate.doOnError(exception);
 		}
 	}
 

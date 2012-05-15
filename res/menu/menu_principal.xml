@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 	<item android:id="@+id/procura_no_mapa" android:title="@string/procure_no_mapa" android:showAsAction="withText" android:icon="@drawable/ic_location" android:enabled="false"/>
+	<item android:id="@+id/search" android:title="@string/search_label" android:showAsAction="withText" android:icon="@drawable/ic_location" />
 </menu>

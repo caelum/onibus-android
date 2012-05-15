@@ -4,21 +4,23 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
+import br.com.caelum.ondeestaobusao.delegate.GetJsonDelegate;
 import br.com.caelum.ondeestaobusao.model.Ponto;
 
 import com.google.gson.reflect.TypeToken;
 
-public class PontosDoOnibusResolver implements GetJsonResolver<Long, List<Ponto>> {
+public class PontosDoOnibusTask implements GetJsonDelegate<Long, List<Ponto>> {
 	private final String server_url = "http://ondeestaoalbi.herokuapp.com/pontosDoOnibusSelecionado.json?onibus=%s";
-	private final AsyncResultDealer<List<Ponto>> resultDealer;
+	private final AsyncResultDelegate<List<Ponto>> delegate;
 	
-	public PontosDoOnibusResolver(AsyncResultDealer<List<Ponto>> resultDealer) {
-		this.resultDealer = resultDealer;
+	public PontosDoOnibusTask(AsyncResultDelegate<List<Ponto>> delegate) {
+		this.delegate = delegate;
 	}
 	
 	@Override
 	public void doOnPostExecute(List<Ponto> result) {
-		resultDealer.dealWithResult(result);
+		delegate.dealWithResult(result);
 	}
 
 	@Override
@@ -38,7 +40,7 @@ public class PontosDoOnibusResolver implements GetJsonResolver<Long, List<Ponto>
 
 	@Override
 	public void doOnError(Exception e) {
-		resultDealer.dealWithError();
+		delegate.dealWithError();
 	}
 
 }
