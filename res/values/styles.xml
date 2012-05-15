@@ -14,4 +14,17 @@
         <item name="android:textColor">@android:color/background_light</item>
         <item name="android:textSize">@dimen/tamanho_letra_da_distancia</item>
     </style>
+    
+	<style name="RateMeDialog" parent="@android:style/Theme.Dialog">
+		<item name="android:windowTitleStyle">@style/RateMeDialogTitle</item>
+	</style>
+	<style name="RateMeDialogTitle" parent="@android:style/TextAppearance.DialogWindowTitle">
+		<item name="android:gravity">center_horizontal</item>
+		<item name="android:maxLines">1</item>
+		<item name="android:height">5dp</item>        
+	</style>
+	<style name="RateMeDialogWindowTitle">
+		<item name="android:textAppearance">@android:style/TextAppearance.DialogWindowTitle</item>
+	</style>
+	
 </resources>

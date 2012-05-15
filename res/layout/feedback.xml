@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="240dp"
+    android:layout_height="210dp"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:layout_gravity="center" >
+    
+    <TextView 
+        android:id="@+id/feedback"
+        android:layout_width="230dp"
+        android:layout_height="wrap_content"
+        android:paddingBottom="15dp"
+        android:gravity="center_horizontal"
+        android:text="@string/vote_na_app"
+        />
+    
+    <Button
+        android:id="@+id/vaiParaOMarket"
+        android:text="@string/votar_agora"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        />
+    
+    <Button
+        android:id="@+id/lembrarMaisTarde" 
+        android:text="@string/lembre_me_mais_tarde"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        />
+    
+    <Button
+        android:id="@+id/naoObrigado"
+        android:text="@string/nao_obrigado" 
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        />
+
+</LinearLayout>

@@ -19,6 +19,7 @@ import br.com.caelum.ondeestaobusao.model.Onibus;
 import br.com.caelum.ondeestaobusao.model.Ponto;
 import br.com.caelum.ondeestaobusao.task.AsyncResultDealer;
 import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
+import br.com.caelum.ondeestaobusao.widget.AppRater;
 
 public class ListPontosAndOnibusActivity extends Activity implements AsyncResultDealer<List<Ponto>> {
 	private ExpandableListView lvPontos;
@@ -27,11 +28,15 @@ public class ListPontosAndOnibusActivity extends Activity implements AsyncResult
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		AppRater.app_launched(this);
+		
 		setContentView(R.layout.list_ponto);
 
 		lvPontos = (ExpandableListView) findViewById(R.id.listPonto);
 		
 		handleIntent(getIntent());
+		
 	}
 	
 	@Override

@@ -49,6 +49,10 @@
             android:name=".ListOnibusActivity"
             android:configChanges="orientation"
             android:label="@string/app_name" />
+        <activity
+            android:name=".RateMeActivity"
+            android:configChanges="orientation"
+            android:label="@string/app_name" />
 
         <uses-library android:name="com.google.android.maps" />
     </application>
