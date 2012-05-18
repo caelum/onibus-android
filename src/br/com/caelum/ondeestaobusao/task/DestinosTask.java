@@ -10,8 +10,7 @@ import br.com.caelum.ondeestaobusao.model.Destino;
 import com.google.gson.reflect.TypeToken;
 
 public class DestinosTask implements GetJsonDelegate<String, Destino> {
-//	private final String server_url = "http://ondeestaoalbi.herokuapp.com/destinoParaEndereco/%s";
-	private final String server_url = "http://192.168.84.100:3000/destinoParaEndereco/%s.json";
+	private final String server_url = "http://ondeestaoalbi.herokuapp.com/destinoParaEndereco/%s";
 	private final AsyncResultDelegate<Destino> delegate;
 	
 	public DestinosTask(AsyncResultDelegate<Destino> delegate) {
