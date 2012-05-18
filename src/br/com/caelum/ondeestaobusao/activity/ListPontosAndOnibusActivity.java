@@ -24,8 +24,6 @@ import br.com.caelum.ondeestaobusao.task.GetJsonAsyncTask;
 import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
 import br.com.caelum.ondeestaobusao.widget.AppRater;
 
-
-
 public class ListPontosAndOnibusActivity extends Activity {
 	private ExpandableListView lvPontos;
 	private Coordenada atual;

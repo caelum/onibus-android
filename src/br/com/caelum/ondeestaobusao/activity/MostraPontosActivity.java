@@ -1,5 +1,6 @@
 package br.com.caelum.ondeestaobusao.activity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,13 +48,27 @@ public class MostraPontosActivity extends MapActivity implements AsyncResultDele
 		mapView.setBuiltInZoomControls(true);
 
 		mapController.setZoom(17);
-		atualizaLocalizacaoPontos(minhaLocalizacao);
+		
+		ArrayList<Ponto> pontos = (ArrayList<Ponto>) getIntent().getSerializableExtra(Extras.PONTOS);
+		atualizaLocalizacaoPontos(minhaLocalizacao, pontos);
 	}
 
 	private void atualizaLocalizacaoPontos(Coordenada minhaLocalizacao) {
-		View progressBar = findViewById(R.id.progress_bar);
-		progressBar.setVisibility(View.VISIBLE);
+		atualizaLocalizacaoPontos(minhaLocalizacao, null);
+	}
+	
+	private void atualizaLocalizacaoPontos(Coordenada minhaLocalizacao, ArrayList<Ponto> pontos) {
+		showProgressBar();
+		mapControl(minhaLocalizacao);
+		
+		if (pontos == null) {
+			new GetJsonAsyncTask<Coordenada, List<Ponto>>(new PontosEOnibusTask(this)).execute(minhaLocalizacao);
+		} else {
+			dealWithResult(pontos);
+		}
+	}
 
+	private void mapControl(Coordenada minhaLocalizacao) {
 		mapView.setClickable(false);
 		
 		meuPontoOverlay.clear();
@@ -61,14 +76,11 @@ public class MostraPontosActivity extends MapActivity implements AsyncResultDele
 		
 		mapController.setCenter(minhaLocalizacao.toGeoPoint());
 		mapController.animateTo(minhaLocalizacao.toGeoPoint());
+	}
 
-		ArrayList<Ponto> pontos = (ArrayList<Ponto>) getIntent().getSerializableExtra(Extras.PONTOS);
-		
-		if (pontos == null) {
-			new GetJsonAsyncTask<Coordenada, List<Ponto>>(new PontosEOnibusTask(this)).execute(minhaLocalizacao);
-		} else {
-			dealWithResult(pontos);
-		}
+	private void showProgressBar() {
+		View progressBar = findViewById(R.id.progress_bar);
+		progressBar.setVisibility(View.VISIBLE);
 	}
 
 	private void inicializaAtributos() {
