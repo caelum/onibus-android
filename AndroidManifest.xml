@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MostraRotaActivity"
+            android:name=".MostraItinerarioActivity"
             android:configChanges="orientation"
             android:label="@string/app_name" />
         <activity
