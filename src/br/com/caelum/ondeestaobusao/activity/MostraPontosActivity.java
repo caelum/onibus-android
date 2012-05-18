@@ -1,5 +1,6 @@
 package br.com.caelum.ondeestaobusao.activity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Bundle;
@@ -61,7 +62,13 @@ public class MostraPontosActivity extends MapActivity implements AsyncResultDele
 		mapController.setCenter(minhaLocalizacao.toGeoPoint());
 		mapController.animateTo(minhaLocalizacao.toGeoPoint());
 
-		new GetJsonAsyncTask<Coordenada, List<Ponto>>(new PontosEOnibusTask(this)).execute(minhaLocalizacao);
+		ArrayList<Ponto> pontos = (ArrayList<Ponto>) getIntent().getSerializableExtra(Extras.PONTOS);
+		
+		if (pontos == null) {
+			new GetJsonAsyncTask<Coordenada, List<Ponto>>(new PontosEOnibusTask(this)).execute(minhaLocalizacao);
+		} else {
+			dealWithResult(pontos);
+		}
 	}
 
 	private void inicializaAtributos() {
