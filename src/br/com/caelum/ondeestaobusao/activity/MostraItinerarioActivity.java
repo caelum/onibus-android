@@ -22,7 +22,7 @@ import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
-public class MostraRotaActivity extends MapActivity implements AsyncResultDelegate<List<Ponto>> {
+public class MostraItinerarioActivity extends MapActivity implements AsyncResultDelegate<List<Ponto>> {
 
 	private MapView mapView;
 	private List<Overlay> overlays;
