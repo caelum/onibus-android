@@ -16,9 +16,11 @@ import br.com.caelum.ondeestaobusao.constants.Extras;
 import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
 import br.com.caelum.ondeestaobusao.gps.GPSControl;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
+import br.com.caelum.ondeestaobusao.model.Destino;
 import br.com.caelum.ondeestaobusao.model.Onibus;
 import br.com.caelum.ondeestaobusao.model.Ponto;
-import br.com.caelum.ondeestaobusao.task.CoordenadaDoEnderecoTask;
+import br.com.caelum.ondeestaobusao.task.DestinosTask;
+import br.com.caelum.ondeestaobusao.task.GetJsonAsyncTask;
 import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
 import br.com.caelum.ondeestaobusao.widget.AppRater;
 
@@ -54,7 +56,7 @@ public class ListPontosAndOnibusActivity extends Activity {
 
 					Onibus onibus = pontos.get(groupPosition).getOnibuses().get(childPosition);
 
-					Intent intent = new Intent(ListPontosAndOnibusActivity.this, MostraRotaActivity.class);
+					Intent intent = new Intent(ListPontosAndOnibusActivity.this, MostraItinerarioActivity.class);
 					intent.putExtra(Extras.ONIBUS, onibus);
 					intent.putExtra(Extras.LOCALIZACAO, atual);
 
@@ -65,6 +67,21 @@ public class ListPontosAndOnibusActivity extends Activity {
 			});
 
 			hideProgressBar();
+		}
+		@Override
+		public void dealWithError() {
+			ListPontosAndOnibusActivity.this.dealWithError();
+		}
+	};
+
+	private AsyncResultDelegate<Destino> delegateDestino = new AsyncResultDelegate<Destino>() {
+		@Override
+		public void dealWithResult(final Destino destino) {
+			Intent intent = new Intent(ListPontosAndOnibusActivity.this, MostraPontosActivity.class);
+			intent.putExtra(Extras.LOCALIZACAO, destino.getCoordenada());
+			intent.putExtra(Extras.PONTOS, destino.getPontos());
+			
+			startActivity(intent);
 		}
 		@Override
 		public void dealWithError() {
@@ -96,7 +113,7 @@ public class ListPontosAndOnibusActivity extends Activity {
 	private void handleIntent(Intent intent) {
 		if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
-            new CoordenadaDoEnderecoTask(getDelegateCoordenada()).execute(query);
+            new GetJsonAsyncTask<String, Destino>(new DestinosTask(getDelegateDestino())).execute(query);
         } else {
     		atualizar();
         }
@@ -175,4 +192,9 @@ public class ListPontosAndOnibusActivity extends Activity {
 	public AsyncResultDelegate<List<Ponto>> getDelegatePontos() {
 		return delegatePontos;
 	}
+	
+	public AsyncResultDelegate<Destino> getDelegateDestino() {
+		return delegateDestino;
+	}
+	
 }
