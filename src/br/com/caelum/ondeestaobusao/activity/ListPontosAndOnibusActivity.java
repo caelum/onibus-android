@@ -54,7 +54,7 @@ public class ListPontosAndOnibusActivity extends Activity {
 
 					Onibus onibus = pontos.get(groupPosition).getOnibuses().get(childPosition);
 
-					Intent intent = new Intent(ListPontosAndOnibusActivity.this, MostraRotaActivity.class);
+					Intent intent = new Intent(ListPontosAndOnibusActivity.this, MostraItinerarioActivity.class);
 					intent.putExtra(Extras.ONIBUS, onibus);
 					intent.putExtra(Extras.LOCALIZACAO, atual);
 

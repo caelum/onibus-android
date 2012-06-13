@@ -41,7 +41,7 @@ public class ListOnibusActivity extends Activity {
 			public void onItemClick(AdapterView<?> pontos, View view, int pos, long pres) {
 				Onibus onibus = (Onibus) pontos.getItemAtPosition(pos);
 				
-				Intent intent = new Intent(ListOnibusActivity.this, MostraRotaActivity.class);
+				Intent intent = new Intent(ListOnibusActivity.this, MostraItinerarioActivity.class);
 				intent.putExtra(Extras.ONIBUS, onibus);
 				intent.putExtra(Extras.LOCALIZACAO, ponto.getCoordenada());
 				
