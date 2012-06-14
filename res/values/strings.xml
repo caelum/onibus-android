@@ -12,6 +12,7 @@
     <string name="procure_no_mapa">Procure no mapa</string>
     <string name="search_hint">Digite o nome da rua</string>
     <string name="search_label">Busca por endereço</string>
+    <string name="erro_localizacao_indeterminada">Não foi possivel determinar sua localização</string>
     <string name="votar_agora">Votar agora!</string>
     <string name="vote_na_app">Se você gostou do Busão SP, por favor, nos dê o seu feedback. Obrigado!</string>
     

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<br.com.caelum.ondeestaobusao.widget.PontoExpandableListView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/listPonto"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:divider="@android:color/black"
+    android:childDivider="@android:color/white"
+    />
