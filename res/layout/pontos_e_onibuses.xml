@@ -4,6 +4,6 @@
     android:id="@+id/listPonto"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:divider="@android:color/black"
+    android:divider="@android:color/white"
     android:childDivider="@android:color/white"
     />

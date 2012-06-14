@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 public class GenericFragmentManager {
 	private List<ViewState> stack = new ArrayList<ViewState>();
 	private final Activity activity;
+	private GenericFragment currentFragment;
 
 	public GenericFragmentManager(Activity activity) {
 		this.activity = activity;
@@ -22,14 +23,17 @@ public class GenericFragmentManager {
 	public GenericFragmentManager replace(int fragmentId, GenericFragment fragment, boolean addToBackStack) {
 		ViewGroup parent  = (ViewGroup) activity.findViewById(fragmentId);
 
+		if (currentFragment != null) currentFragment.finish();
+		
 		if (addToBackStack) {
-			stack.add(0, new ViewState(parent));
+			stack.add(0, new ViewState(currentFragment, parent));
 		}
 		
 		parent.removeAllViews();
 		
-		View view = fragment.onCreateView(activity, parent);		
+		View view = fragment.onCreateView(activity, parent);
 		parent.addView(view);
+		currentFragment = fragment;
 		
 		return this;
 	}
@@ -45,10 +49,12 @@ public class GenericFragmentManager {
 	}
 	
 	private class ViewState {
+		private GenericFragment fragment;
 		private ViewGroup parent;
 		private List<View> currentChildren;
 		
-		public ViewState(ViewGroup parent) {
+		public ViewState(GenericFragment fragment, ViewGroup parent) {
+			this.fragment = fragment;
 			this.parent = parent;
 			extractChildren(this.parent);
 		}
@@ -64,6 +70,7 @@ public class GenericFragmentManager {
 			for (View view : currentChildren) {
 				parent.addView(view);
 			}
+			fragment.resume();
 		}
 	}
 	

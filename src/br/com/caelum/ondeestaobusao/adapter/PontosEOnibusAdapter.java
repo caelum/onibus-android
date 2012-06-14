@@ -77,7 +77,7 @@ public class PontosEOnibusAdapter extends BaseExpandableListAdapter{
 		distancia.setText(ponto.getDistancia());
 		
 		if(isExpanded) {
-			view.setBackgroundResource(R.drawable.gradiente_vertical_azul_claro);
+			view.setBackgroundResource(R.drawable.gradiente_vertical_black_claro);
 		}
 		
 		return view;

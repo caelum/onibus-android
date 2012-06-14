@@ -17,14 +17,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/logo"
-        android:text="Pontos Próximos"
+        android:text="@string/pontos_proximos"
         android:textAppearance="@android:style/TextAppearance.Large" />
 
     <ImageView
         android:id="@+id/share"
         style="@style/Action_Bottom_Menu"
         android:layout_alignParentRight="true"
-        android:background="@drawable/ic_share"
-        android:onClick="onClickShare" />
+        android:background="@drawable/ic_share" />
 
 </RelativeLayout>

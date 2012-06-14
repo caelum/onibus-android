@@ -12,7 +12,6 @@ import android.util.Log;
 import android.widget.Toast;
 import br.com.caelum.ondeestaobusao.activity.BusaoActivity;
 import br.com.caelum.ondeestaobusao.activity.R;
-import br.com.caelum.ondeestaobusao.fragments.GPSObserver;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
 
 public class GPSControl {
@@ -59,6 +58,7 @@ public class GPSControl {
 			Log.i("Provider", "NETWORK");
 			locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, TIME, DISTANCE, locationListener);
 		}
+		activity.atualizaTextoDoProgress(R.string.carregando_gps);
 		Log.i("BUSCANDO LOCALIZACAO","");
 	}
 	

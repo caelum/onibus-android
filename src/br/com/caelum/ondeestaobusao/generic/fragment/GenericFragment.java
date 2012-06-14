@@ -7,4 +7,8 @@ import android.view.ViewGroup;
 public interface GenericFragment {
 
 	public View onCreateView(Activity activity, ViewGroup container);
+	
+	public void finish();
+	
+	public void resume();
 }

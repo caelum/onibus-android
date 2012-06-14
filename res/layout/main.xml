@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 	<include android:id="@+id/action_top" android:layout_height="48dp" android:layout_width="fill_parent" layout="@layout/action_bar" />
-	<FrameLayout android:id="@+id/fragment_main" android:layout_height="0dp" android:layout_weight="1" android:layout_width="fill_parent"  />
+	<FrameLayout android:id="@+id/fragment_main" android:layout_height="0dp" android:layout_weight="1" android:layout_width="fill_parent" android:visibility="gone" />
+	<include android:id="@+id/progress_bar" layout="@layout/progress_bar" android:layout_height="0dp" android:layout_weight="1" android:layout_width="fill_parent" />
 	<include android:id="@+id/action_bottom" android:layout_height="48dp" android:layout_width="fill_parent" layout="@layout/action_footer" />
 </LinearLayout>

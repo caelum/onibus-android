@@ -8,7 +8,9 @@
     <ImageView
         android:id="@+id/refresh"
         style="@style/Action_Bottom_Menu"
-        android:background="@drawable/ic_refresh" />
+        android:background="@drawable/ic_refresh"
+        android:contentDescription="@string/atualizar"
+        android:onClick="atualiza" />
 
     <ImageView
         android:id="@+id/favorite"
