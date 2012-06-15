@@ -3,17 +3,22 @@ package br.com.caelum.ondeestaobusao.generic.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.caelum.ondeestaobusao.activity.R;
+
 import android.app.Activity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 public class GenericFragmentManager {
 	private List<ViewState> stack = new ArrayList<ViewState>();
 	private final Activity activity;
 	private GenericFragment currentFragment;
+	private TextView fragmentName;
 
 	public GenericFragmentManager(Activity activity) {
 		this.activity = activity;
+		fragmentName = (TextView) this.activity.findViewById(R.id.fragment_name);
 	}
 	
 	public GenericFragmentManager replace(int fragmentId, GenericFragment fragment) {
@@ -32,6 +37,7 @@ public class GenericFragmentManager {
 		parent.removeAllViews();
 		
 		View view = fragment.onCreateView(activity, parent);
+		fragmentName.setText(fragment.getName());
 		parent.addView(view);
 		currentFragment = fragment;
 		
@@ -42,6 +48,7 @@ public class GenericFragmentManager {
 		if (!stack.isEmpty()) {
 			ViewState state = stack.remove(0);
 			state.restoreLast();
+			fragmentName.setText(state.getFragment().getName());
 			return true;
 		}
 		
@@ -51,7 +58,7 @@ public class GenericFragmentManager {
 	private class ViewState {
 		private GenericFragment fragment;
 		private ViewGroup parent;
-		private List<View> currentChildren;
+		private List<View> currentChildren = new ArrayList<View>();
 		
 		public ViewState(GenericFragment fragment, ViewGroup parent) {
 			this.fragment = fragment;
@@ -72,7 +79,10 @@ public class GenericFragmentManager {
 			}
 			fragment.resume();
 		}
+		
+		public GenericFragment getFragment() {
+			return fragment;
+		}
 	}
 	
-
 }

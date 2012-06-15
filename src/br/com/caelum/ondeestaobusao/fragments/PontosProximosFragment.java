@@ -15,19 +15,19 @@ import br.com.caelum.ondeestaobusao.generic.fragment.GenericFragment;
 import br.com.caelum.ondeestaobusao.gps.GPSControl;
 import br.com.caelum.ondeestaobusao.gps.GPSObserver;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
+import br.com.caelum.ondeestaobusao.model.Onibus;
 import br.com.caelum.ondeestaobusao.model.Ponto;
 import br.com.caelum.ondeestaobusao.task.PontosEOnibusTask;
-import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
 import br.com.caelum.ondeestaobusao.widget.PontoExpandableListView;
 
-public class PontosProximos implements GenericFragment, GPSObserver, AsyncResultDelegate<List<Ponto>> {
+public class PontosProximosFragment implements GenericFragment, GPSObserver, AsyncResultDelegate<List<Ponto>> {
 
 	private final GPSControl gps;
 	private BusaoActivity activity;
 	private PontoExpandableListView pontosExpandableListView;
 	private View menuBottom;
 
-	public PontosProximos(GPSControl gps) {
+	public PontosProximosFragment(GPSControl gps) {
 		this.gps = gps;
 		this.gps.registerObserver(this);
 	}
@@ -39,6 +39,7 @@ public class PontosProximos implements GenericFragment, GPSObserver, AsyncResult
 		menuBottom = this.activity.findViewById(R.id.action_bottom);
 		
 		pontosExpandableListView = (PontoExpandableListView) activity.getLayoutInflater().inflate(R.layout.pontos_e_onibuses, container, false);
+		pontosExpandableListView.setVisibility(View.GONE);
 		return pontosExpandableListView;
 	}
 
@@ -49,24 +50,25 @@ public class PontosProximos implements GenericFragment, GPSObserver, AsyncResult
 	}
 
 	@Override
-	public void dealWithResult(List<Ponto> pontos) {
+	public void dealWithResult(final List<Ponto> pontos) {
 		pontosExpandableListView.setAdapter(new PontosEOnibusAdapter(pontos, activity));
 
 		pontosExpandableListView.setOnChildClickListener(new OnChildClickListener() {
 			@Override
 			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-
-				// TODO Auto-generated method stub
-
+				Onibus onibus = pontos.get(groupPosition).getOnibuses().get(childPosition);
+				
+				activity.getGenericFragmentManager().replace(R.id.fragment_main, new MapaOnibusFragment(gps, onibus), true);
 				return false;
 			}
 		});
+		pontosExpandableListView.setVisibility(View.VISIBLE);
 		activity.escondeProgress();
 	}
 
 	@Override
 	public void dealWithError() {
-		new AlertDialogBuilder(activity).build().show();
+		activity.dealWithError();
 	}
 
 	@Override
@@ -77,6 +79,11 @@ public class PontosProximos implements GenericFragment, GPSObserver, AsyncResult
 	@Override
 	public void resume() {
 		menuBottom.setVisibility(View.VISIBLE);
+	}
+
+	@Override
+	public String getName() {
+		return "Pontos Próximos";
 	}
 
 }

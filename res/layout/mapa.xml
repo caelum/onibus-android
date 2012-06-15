@@ -1,28 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.maps.MapView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/map_view"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
-
-    <TextView
-        android:id="@+id/titulo_mapa"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:gravity="center" />
-
-    <com.google.android.maps.MapView
-        android:id="@+id/map_view"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:apiKey="@string/google_maps_key"
-        android:clickable="true"
-        android:enabled="true" android:visibility="gone" />
-
-    <include
-        android:id="@+id/progress_bar"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        layout="@layout/progress_bar" />
-
-</LinearLayout>
+    android:apiKey="@string/google_maps_key"
+    android:clickable="true"
+    android:enabled="true"
+/>

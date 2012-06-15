@@ -18,8 +18,8 @@ public class PontoOverlay extends ItemizedOverlay<OverlayItem> {
 		super(drawable);
 	}
 
-	public PontoOverlay(Drawable defaultMarker, Context context) {
-		super(boundCenterBottom(defaultMarker));
+	public PontoOverlay(Context context, int drawable) {
+		super(boundCenterBottom(context.getResources().getDrawable(drawable)));
 		mContext = context;
 	}
 

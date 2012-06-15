@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
 	<include android:id="@+id/action_top" android:layout_height="48dp" android:layout_width="fill_parent" layout="@layout/action_bar" />
-	<FrameLayout android:id="@+id/fragment_main" android:layout_height="0dp" android:layout_weight="1" android:layout_width="fill_parent" android:visibility="gone" />
-	<include android:id="@+id/progress_bar" layout="@layout/progress_bar" android:layout_height="0dp" android:layout_weight="1" android:layout_width="fill_parent" />
-	<include android:id="@+id/action_bottom" android:layout_height="48dp" android:layout_width="fill_parent" layout="@layout/action_footer" />
-</LinearLayout>
+	<FrameLayout android:id="@+id/fragment_main" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_above="@+id/action_bottom" android:layout_below="@+id/action_top"/>
+	<include android:id="@+id/progress_bar" layout="@layout/progress_bar" android:layout_height="wrap_content" android:layout_width="fill_parent" android:layout_alignBottom="@+id/fragment_main" android:layout_below="@+id/action_top" />
+	<include android:id="@+id/action_bottom" android:layout_height="48dp" android:layout_width="fill_parent" layout="@layout/action_footer" android:layout_alignParentBottom="true" />
+</RelativeLayout>

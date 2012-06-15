@@ -16,7 +16,6 @@ public class PontosDoOnibusTask extends GetJsonAsyncTask<Long, List<Ponto>> {
 		super(delegate);
 	}
 
-
 	@Override
 	public String getFormatedURL(Long... params) {
 		return String.format(server_url, params[0]);

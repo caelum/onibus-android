@@ -1,20 +1,22 @@
 package br.com.caelum.ondeestaobusao.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-import br.com.caelum.ondeestaobusao.fragments.PontosProximos;
+import br.com.caelum.ondeestaobusao.fragments.PontosProximosFragment;
 import br.com.caelum.ondeestaobusao.generic.fragment.GenericFragmentManager;
 import br.com.caelum.ondeestaobusao.gps.GPSControl;
+import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
 import br.com.caelum.ondeestaobusao.widget.AppRater;
 
-public class BusaoActivity extends Activity {
+import com.google.android.maps.MapActivity;
+
+public class BusaoActivity extends MapActivity {
 	
 	private GPSControl gps;
 	private TextView textProgressBar;
-	private View frameLayout;
 	private View progressBar;
+	private GenericFragmentManager fragmentManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,12 +30,11 @@ public class BusaoActivity extends Activity {
 		
 		AppRater.app_launched(this);
 		
-		new GenericFragmentManager(this).replace(R.id.fragment_main, new PontosProximos(gps));
+		fragmentManager = new GenericFragmentManager(this).replace(R.id.fragment_main, new PontosProximosFragment(gps));
 		
 	}
 
 	private void carregaElementosDaTela() {
-		frameLayout = findViewById(R.id.fragment_main);
 		progressBar = findViewById(R.id.progress_bar);
 		textProgressBar = (TextView) findViewById(R.id.progress_text);
 	}
@@ -50,17 +51,32 @@ public class BusaoActivity extends Activity {
 	
 	public void escondeProgress() {
 		progressBar.setVisibility(View.GONE);
-		frameLayout.setVisibility(View.VISIBLE);
 	}
 	
+	public void exibeProgressEEscondeFrameLayout() {
+		progressBar.setVisibility(View.VISIBLE);
+	}
+
 	public void exibeProgress() {
 		progressBar.setVisibility(View.VISIBLE);
-		frameLayout.setVisibility(View.GONE);
 	}
 	
 	public void atualiza(View v) {
 		gps.execute();
-		exibeProgress();
+		exibeProgressEEscondeFrameLayout();
+	}
+	
+	public GenericFragmentManager getGenericFragmentManager() {
+		return fragmentManager;
+	}
+
+	@Override
+	protected boolean isRouteDisplayed() {
+		return false;
+	}
+
+	public void dealWithError() {
+		new AlertDialogBuilder(this).build().show();		
 	}
 
 }
