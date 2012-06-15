@@ -37,7 +37,7 @@ public class PontosEOnibusAdapter extends BaseExpandableListAdapter{
 		Onibus onibus = pontos.get(groupPosition).getOnibuses().get(childPosition);
 		
 		TextView view = (TextView) activity.getLayoutInflater().inflate(R.layout.item_onibus, null);
-		view.setText(onibus.getNome());
+		view.setText(onibus.getLetreiro());
 		
 		return view;
 	}

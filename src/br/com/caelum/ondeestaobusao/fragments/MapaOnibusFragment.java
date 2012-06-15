@@ -103,7 +103,7 @@ public class MapaOnibusFragment implements GenericFragment, GPSObserver, AsyncRe
 
 	@Override
 	public String getName() {
-		return onibus.getNome();
+		return onibus.getLetreiro();
 	}
 
 }
