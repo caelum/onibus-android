@@ -2,13 +2,14 @@ package br.com.caelum.ondeestaobusao.fragments;
 
 import java.util.List;
 
-import android.app.Activity;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import br.com.caelum.ondeestaobusao.activity.BusaoActivity;
 import br.com.caelum.ondeestaobusao.activity.R;
 import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
-import br.com.caelum.ondeestaobusao.generic.fragment.GenericFragment;
 import br.com.caelum.ondeestaobusao.gps.GPSControl;
 import br.com.caelum.ondeestaobusao.gps.GPSObserver;
 import br.com.caelum.ondeestaobusao.map.PontoOverlay;
@@ -22,7 +23,7 @@ import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
-public class MapaOnibusFragment implements GenericFragment, GPSObserver, AsyncResultDelegate<List<Ponto>> {
+public class MapaOnibusFragment extends Fragment implements GPSObserver, AsyncResultDelegate<List<Ponto>> {
 
 	private MapView mapa;
 	private GPSControl gps;
@@ -30,6 +31,7 @@ public class MapaOnibusFragment implements GenericFragment, GPSObserver, AsyncRe
 	private final Onibus onibus;
 	private PontoOverlay pontoOverlay;
 	private List<Overlay> overlays;
+	private ViewGroup container;
 
 	public MapaOnibusFragment(GPSControl gps, Onibus onibus) {
 		this.gps = gps;
@@ -37,17 +39,22 @@ public class MapaOnibusFragment implements GenericFragment, GPSObserver, AsyncRe
 	}
 
 	@Override
-	public View onCreateView(Activity activity, ViewGroup container) {
-		this.activity = (BusaoActivity) activity;
+	public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle bundle) {
+		this.activity = (BusaoActivity) inflater.getContext();
+		this.activity.atualizaNomeFragment(onibus.getNome());
 
-		mapa = (MapView) activity.getLayoutInflater().inflate(R.layout.mapa, container, false);
+		container = this.activity.getMapViewContainer();
+		mapa = this.activity.getMapView();
+
 		configuraMapView();
-		
+
 		this.gps.registerObserver(this);
-		return mapa;
+
+		return container;
 	}
 
 	private void configuraMapView() {
+		mapa = (MapView) container.findViewById(R.id.map_view);
 		mapa.displayZoomControls(true);
 		mapa.setBuiltInZoomControls(true);
 
@@ -57,19 +64,14 @@ public class MapaOnibusFragment implements GenericFragment, GPSObserver, AsyncRe
 	}
 
 	@Override
-	public void finish() {
-
-	}
-
-	@Override
-	public void resume() {
-
-	}
-
-	@Override
 	public void callback(Coordenada coordenada) {
 		mapa.getController().setCenter(coordenada.toGeoPoint());
 		mapa.getController().animateTo(coordenada.toGeoPoint());
+		
+		MyLocationOverlay myLocationOverlay = new MyLocationOverlay(activity, mapa);
+		myLocationOverlay.enableCompass();
+		myLocationOverlay.enableMyLocation();
+		overlays.add(myLocationOverlay);
 
 		activity.exibeProgress();
 		activity.atualizaTextoDoProgress(R.string.buscando_pontos_onibus);
@@ -78,14 +80,8 @@ public class MapaOnibusFragment implements GenericFragment, GPSObserver, AsyncRe
 
 	@Override
 	public void dealWithResult(List<Ponto> pontos) {
-		overlays.clear();
 		pontoOverlay.clear();
 
-		MyLocationOverlay myLocationOverlay = new MyLocationOverlay(activity, mapa);
-		myLocationOverlay.enableCompass();
-		myLocationOverlay.enableMyLocation();
-		
-		overlays.add(myLocationOverlay);
 		for (Ponto ponto : pontos) {
 			pontoOverlay.addOverlay(new OverlayItem(ponto.getCoordenada().toGeoPoint(), "Localização do ponto:", ponto
 					.getDescricao()));
@@ -102,8 +98,16 @@ public class MapaOnibusFragment implements GenericFragment, GPSObserver, AsyncRe
 	}
 
 	@Override
-	public String getName() {
-		return onibus.getNome();
+	public void onDestroyView() {
+		super.onDestroyView();
+		
+		overlays.clear();
+		pontoOverlay.clear();
+		
+		ViewGroup parentViewGroup = (ViewGroup) container.getParent();
+		if (null != parentViewGroup) {
+			parentViewGroup.removeView(container);
+		}
 	}
 
 }

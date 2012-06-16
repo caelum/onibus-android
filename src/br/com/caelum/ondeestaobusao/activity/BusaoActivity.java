@@ -1,42 +1,50 @@
 package br.com.caelum.ondeestaobusao.activity;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 import br.com.caelum.ondeestaobusao.fragments.PontosProximosFragment;
-import br.com.caelum.ondeestaobusao.generic.fragment.GenericFragmentManager;
 import br.com.caelum.ondeestaobusao.gps.GPSControl;
 import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
 import br.com.caelum.ondeestaobusao.widget.AppRater;
 
-import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapView;
 
-public class BusaoActivity extends MapActivity {
-	
+public class BusaoActivity extends FragmentActivity {
+
 	private GPSControl gps;
 	private TextView textProgressBar;
 	private View progressBar;
-	private GenericFragmentManager fragmentManager;
+	private TextView fragmentName;
+	private ViewGroup mapViewContainer;
+	private MapView mapView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		
+
 		carregaElementosDaTela();
 
 		gps = new GPSControl(this);
 		gps.execute();
-		
+
 		AppRater.app_launched(this);
 		
-		fragmentManager = new GenericFragmentManager(this).replace(R.id.fragment_main, new PontosProximosFragment(gps));
-		
+		mapViewContainer = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.mapa, null);
+		mapView = (MapView) mapViewContainer.findViewById(R.id.map_view);
+
+		getSupportFragmentManager().beginTransaction()
+				.add(R.id.fragment_main, new PontosProximosFragment(gps), "Pontos Próximos").commit();
 	}
 
 	private void carregaElementosDaTela() {
 		progressBar = findViewById(R.id.progress_bar);
 		textProgressBar = (TextView) findViewById(R.id.progress_text);
+		fragmentName = (TextView) findViewById(R.id.fragment_name);
 	}
 
 	@Override
@@ -48,11 +56,11 @@ public class BusaoActivity extends MapActivity {
 	public void atualizaTextoDoProgress(int string) {
 		textProgressBar.setText(getResources().getString(string));
 	}
-	
+
 	public void escondeProgress() {
 		progressBar.setVisibility(View.GONE);
 	}
-	
+
 	public void exibeProgressEEscondeFrameLayout() {
 		progressBar.setVisibility(View.VISIBLE);
 	}
@@ -60,14 +68,14 @@ public class BusaoActivity extends MapActivity {
 	public void exibeProgress() {
 		progressBar.setVisibility(View.VISIBLE);
 	}
-	
+
 	public void atualiza(View v) {
 		gps.execute();
 		exibeProgressEEscondeFrameLayout();
 	}
-	
-	public GenericFragmentManager getGenericFragmentManager() {
-		return fragmentManager;
+
+	public void atualizaNomeFragment(String name) {
+		this.fragmentName.setText(name);
 	}
 
 	@Override
@@ -76,7 +84,14 @@ public class BusaoActivity extends MapActivity {
 	}
 
 	public void dealWithError() {
-		new AlertDialogBuilder(this).build().show();		
+		new AlertDialogBuilder(this).build().show();
 	}
 
+	public MapView getMapView() {
+		return mapView;
+	}
+	
+	public ViewGroup getMapViewContainer() {
+		return mapViewContainer;
+	}
 }

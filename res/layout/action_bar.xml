@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/logo"
         android:text="@string/pontos_proximos"
-        android:textAppearance="@android:style/TextAppearance.Large" />
+        android:textAppearance="@android:style/TextAppearance.Medium" />
 
     <ImageView
         android:id="@+id/share"

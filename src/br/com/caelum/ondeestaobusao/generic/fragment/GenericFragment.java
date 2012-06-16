@@ -13,4 +13,5 @@ public interface GenericFragment {
 	public void resume();
 	
 	public String getName();
+	
 }

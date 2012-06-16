@@ -15,6 +15,7 @@ public class GenericFragmentManager {
 	private final Activity activity;
 	private GenericFragment currentFragment;
 	private TextView fragmentName;
+	private View mapView;
 
 	public GenericFragmentManager(Activity activity) {
 		this.activity = activity;
@@ -36,16 +37,27 @@ public class GenericFragmentManager {
 		
 		parent.removeAllViews();
 		
-		View view = fragment.onCreateView(activity, parent);
+		View view;
+		if (fragment instanceof GenericMapFragment)  {
+			if (mapView == null) {
+				mapView = fragment.onCreateView(activity, parent);
+			}
+			view = mapView;
+		} else {
+			view = fragment.onCreateView(activity, parent);
+		}
+		
 		fragmentName.setText(fragment.getName());
 		parent.addView(view);
 		currentFragment = fragment;
+		currentFragment.resume();
 		
 		return this;
 	}
 
 	public boolean back() {
 		if (!stack.isEmpty()) {
+			currentFragment.finish();
 			ViewState state = stack.remove(0);
 			state.restoreLast();
 			fragmentName.setText(state.getFragment().getName());

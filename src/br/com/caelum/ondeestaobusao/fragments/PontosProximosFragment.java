@@ -2,7 +2,9 @@ package br.com.caelum.ondeestaobusao.fragments;
 
 import java.util.List;
 
-import android.app.Activity;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
@@ -11,7 +13,6 @@ import br.com.caelum.ondeestaobusao.activity.BusaoActivity;
 import br.com.caelum.ondeestaobusao.activity.R;
 import br.com.caelum.ondeestaobusao.adapter.PontosEOnibusAdapter;
 import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
-import br.com.caelum.ondeestaobusao.generic.fragment.GenericFragment;
 import br.com.caelum.ondeestaobusao.gps.GPSControl;
 import br.com.caelum.ondeestaobusao.gps.GPSObserver;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
@@ -20,7 +21,7 @@ import br.com.caelum.ondeestaobusao.model.Ponto;
 import br.com.caelum.ondeestaobusao.task.PontosEOnibusTask;
 import br.com.caelum.ondeestaobusao.widget.PontoExpandableListView;
 
-public class PontosProximosFragment implements GenericFragment, GPSObserver, AsyncResultDelegate<List<Ponto>> {
+public class PontosProximosFragment extends Fragment implements GPSObserver, AsyncResultDelegate<List<Ponto>> {
 
 	private final GPSControl gps;
 	private BusaoActivity activity;
@@ -29,17 +30,23 @@ public class PontosProximosFragment implements GenericFragment, GPSObserver, Asy
 
 	public PontosProximosFragment(GPSControl gps) {
 		this.gps = gps;
-		this.gps.registerObserver(this);
 	}
 
 	@Override
-	public View onCreateView(Activity activity, ViewGroup container) {
-		this.activity = (BusaoActivity) activity;
+	public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle bundle) {
+		if (this.activity == null) {
+			this.activity = (BusaoActivity) inflater.getContext();
+	
+			menuBottom = this.activity.findViewById(R.id.action_bottom);
+	
+			pontosExpandableListView = (PontoExpandableListView) inflater
+					.inflate(R.layout.pontos_e_onibuses, parent, false);
+			pontosExpandableListView.setVisibility(View.GONE);
+			
+			this.gps.registerObserver(this);
+		}
+		this.activity.atualizaNomeFragment(getTag());
 		
-		menuBottom = this.activity.findViewById(R.id.action_bottom);
-		
-		pontosExpandableListView = (PontoExpandableListView) activity.getLayoutInflater().inflate(R.layout.pontos_e_onibuses, container, false);
-		pontosExpandableListView.setVisibility(View.GONE);
 		return pontosExpandableListView;
 	}
 
@@ -57,8 +64,10 @@ public class PontosProximosFragment implements GenericFragment, GPSObserver, Asy
 			@Override
 			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 				Onibus onibus = pontos.get(groupPosition).getOnibuses().get(childPosition);
-				
-				activity.getGenericFragmentManager().replace(R.id.fragment_main, new MapaOnibusFragment(gps, onibus), true);
+
+				getFragmentManager().beginTransaction()
+						.add(R.id.fragment_main, new MapaOnibusFragment(gps, onibus), onibus.getNome())
+						.addToBackStack(null).remove(PontosProximosFragment.this).commit();
 				return false;
 			}
 		});
@@ -72,18 +81,24 @@ public class PontosProximosFragment implements GenericFragment, GPSObserver, Asy
 	}
 
 	@Override
-	public void finish() {
+	public void onPause() {
+		super.onPause();
 		menuBottom.setVisibility(View.GONE);
 	}
-
-	@Override
-	public void resume() {
+	
+	public void onResume() {
+		super.onResume();
 		menuBottom.setVisibility(View.VISIBLE);
 	}
-
+	
 	@Override
-	public String getName() {
-		return "Pontos Próximos";
+	public void onDestroyView() {
+		super.onDestroyView();
+		
+		ViewGroup parent = (ViewGroup) pontosExpandableListView.getParent();
+		if (parent != null) {
+			parent.removeView(pontosExpandableListView);
+		}
 	}
 
 }

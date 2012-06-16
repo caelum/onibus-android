@@ -64,6 +64,7 @@ public class GPSControl {
 	
 	public void shutdown() {
 		locationManager.removeUpdates(locationListener);
+		locationManager.removeUpdates(locationListener);
 	}
 
 	private void makeUseLocation(Location location) {
