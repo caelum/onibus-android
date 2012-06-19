@@ -10,7 +10,7 @@ import br.com.caelum.ondeestaobusao.model.Ponto;
 import com.google.gson.reflect.TypeToken;
 
 public class PontosDoOnibusTask extends GetJsonAsyncTask<Long, List<Ponto>> {
-	private final String server_url = "http://ondeestaoalbi.herokuapp.com/pontosDoOnibusSelecionado.json?onibus=%s";
+	private final String server_url = "http://ondeestaoalbi2.herokuapp.com/itinerarioDoOnibus.json?onibus=%s";
 	
 	public PontosDoOnibusTask(AsyncResultDelegate<List<Ponto>> delegate) {
 		super(delegate);
