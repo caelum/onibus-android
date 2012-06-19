@@ -41,7 +41,7 @@ public class MapaOnibusFragment extends Fragment implements GPSObserver, AsyncRe
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle bundle) {
 		this.activity = (BusaoActivity) inflater.getContext();
-		this.activity.atualizaNomeFragment(onibus.getNome());
+		this.activity.atualizaNomeFragment(onibus.getLetreiro());
 
 		container = this.activity.getMapViewContainer();
 		mapa = this.activity.getMapView();

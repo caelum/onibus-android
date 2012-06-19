@@ -66,7 +66,7 @@ public class PontosProximosFragment extends Fragment implements GPSObserver, Asy
 				Onibus onibus = pontos.get(groupPosition).getOnibuses().get(childPosition);
 
 				getFragmentManager().beginTransaction()
-						.add(R.id.fragment_main, new MapaOnibusFragment(gps, onibus), onibus.getNome())
+						.add(R.id.fragment_main, new MapaOnibusFragment(gps, onibus), onibus.getLetreiro())
 						.addToBackStack(null).remove(PontosProximosFragment.this).commit();
 				return false;
 			}

@@ -61,17 +61,13 @@ public class BusaoActivity extends FragmentActivity {
 		progressBar.setVisibility(View.GONE);
 	}
 
-	public void exibeProgressEEscondeFrameLayout() {
-		progressBar.setVisibility(View.VISIBLE);
-	}
-
 	public void exibeProgress() {
 		progressBar.setVisibility(View.VISIBLE);
 	}
 
 	public void atualiza(View v) {
 		gps.execute();
-		exibeProgressEEscondeFrameLayout();
+		exibeProgress();
 	}
 
 	public void atualizaNomeFragment(String name) {
