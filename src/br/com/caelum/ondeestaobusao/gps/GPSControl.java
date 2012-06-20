@@ -90,5 +90,9 @@ public class GPSControl {
 		Log.i("OBSERVER ADICIONADO","");
 		this.observers.add(observer);
 	}
+	
+	public void unRegisterObserver(GPSObserver observer) {
+		this.observers.remove(observer);
+	}
 
 }

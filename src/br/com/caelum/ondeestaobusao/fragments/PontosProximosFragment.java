@@ -15,7 +15,6 @@ import br.com.caelum.ondeestaobusao.activity.BusaoActivity;
 import br.com.caelum.ondeestaobusao.activity.R;
 import br.com.caelum.ondeestaobusao.adapter.PontosEOnibusAdapter;
 import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
-import br.com.caelum.ondeestaobusao.gps.GPSControl;
 import br.com.caelum.ondeestaobusao.gps.GPSObserver;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
 import br.com.caelum.ondeestaobusao.model.Onibus;
@@ -25,31 +24,23 @@ import br.com.caelum.ondeestaobusao.widget.PontoExpandableListView;
 
 public class PontosProximosFragment extends Fragment implements GPSObserver, AsyncResultDelegate<List<Ponto>> {
 
-	private final GPSControl gps;
 	private BusaoActivity activity;
 	private PontoExpandableListView pontosExpandableListView;
 	private View menuBottom;
 	private List<Ponto> pontos;
 	private AsyncTask<Coordenada, Void, List<Ponto>> pontosEOnibusTask;
 
-	public PontosProximosFragment(GPSControl gps) {
-		this.gps = gps;
+	public PontosProximosFragment(BusaoActivity activity) {
+		this.activity = activity;
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle bundle) {
-		if (this.activity == null) {
-			this.activity = (BusaoActivity) inflater.getContext();
+		menuBottom = this.activity.findViewById(R.id.action_bottom);
 	
-			menuBottom = this.activity.findViewById(R.id.action_bottom);
-	
-			pontosExpandableListView = (PontoExpandableListView) inflater
-					.inflate(R.layout.pontos_e_onibuses, parent, false);
-			pontosExpandableListView.setVisibility(View.GONE);
-			
-			this.gps.registerObserver(this);
-		}
-		this.activity.atualizaNomeFragment(getTag());
+		pontosExpandableListView = (PontoExpandableListView) inflater
+				.inflate(R.layout.pontos_e_onibuses, parent, false);
+		pontosExpandableListView.setVisibility(View.GONE);
 		
 		return pontosExpandableListView;
 	}
@@ -70,9 +61,9 @@ public class PontosProximosFragment extends Fragment implements GPSObserver, Asy
 			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 				Onibus onibus = pontos.get(groupPosition).getOnibuses().get(childPosition);
 
-				getFragmentManager().beginTransaction()
-						.add(R.id.fragment_main, new MapaDoOnibusFragment(gps, onibus), onibus.toString())
-						.addToBackStack(null).remove(PontosProximosFragment.this).commit();
+				activity.mudaFragment(PontosProximosFragment.this,
+						new MapaDoOnibusFragment(activity, onibus), onibus.toString());
+				
 				return false;
 			}
 		});

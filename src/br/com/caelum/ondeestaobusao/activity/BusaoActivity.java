@@ -1,6 +1,7 @@
 package br.com.caelum.ondeestaobusao.activity;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import br.com.caelum.ondeestaobusao.fragments.PontosProximosFragment;
 import br.com.caelum.ondeestaobusao.gps.GPSControl;
+import br.com.caelum.ondeestaobusao.gps.GPSObserver;
 import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
 import br.com.caelum.ondeestaobusao.widget.AppRater;
 
@@ -21,7 +23,7 @@ public class BusaoActivity extends FragmentActivity {
 	private TextView fragmentName;
 	private ViewGroup mapViewContainer;
 	private MapView mapView;
-	private PontosProximosFragment pontosProximosFragment;
+	private PontosProximosFragment fragment;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +40,12 @@ public class BusaoActivity extends FragmentActivity {
 		mapViewContainer = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.mapa, null);
 		mapView = (MapView) mapViewContainer.findViewById(R.id.map_view);
 
-		pontosProximosFragment = new PontosProximosFragment(gps);
+		fragment = new PontosProximosFragment(this);
+		
 		getSupportFragmentManager().beginTransaction()
-				.add(R.id.fragment_main, pontosProximosFragment, "Pontos Próximos").commit();
+				.add(R.id.fragment_main, fragment, "Pontos Próximos").commit();
+		
+		gps.registerObserver(fragment);
 	}
 
 	private void carregaElementosDaTela() {
@@ -53,6 +58,23 @@ public class BusaoActivity extends FragmentActivity {
 	public void finish() {
 		gps.shutdown();
 		super.finish();
+	}
+	
+	public void mudaFragment(Fragment origem, Fragment destino, String titulo) {
+		getSupportFragmentManager().beginTransaction()
+			.add(R.id.fragment_main, destino, titulo)
+			.addToBackStack(null)
+			.remove(origem)
+		.commit();
+		
+		if (destino instanceof GPSObserver) {
+			gps.registerObserver((GPSObserver) destino);
+		}
+//		if (origem instanceof GPSObserver) {
+//			gps.unRegisterObserver((GPSObserver) origem);
+//		}
+		
+		this.fragmentName.setText(titulo);
 	}
 	
 	public void atualizaTextoDoProgress(int string) {
@@ -71,11 +93,7 @@ public class BusaoActivity extends FragmentActivity {
 		gps.execute();
 		exibeProgress();
 	}
-
-	public void atualizaNomeFragment(String name) {
-		this.fragmentName.setText(name);
-	}
-
+	
 	@Override
 	protected boolean isRouteDisplayed() {
 		return false;
