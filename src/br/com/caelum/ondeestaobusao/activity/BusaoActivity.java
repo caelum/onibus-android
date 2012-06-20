@@ -21,6 +21,7 @@ public class BusaoActivity extends FragmentActivity {
 	private TextView fragmentName;
 	private ViewGroup mapViewContainer;
 	private MapView mapView;
+	private PontosProximosFragment pontosProximosFragment;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +38,9 @@ public class BusaoActivity extends FragmentActivity {
 		mapViewContainer = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.mapa, null);
 		mapView = (MapView) mapViewContainer.findViewById(R.id.map_view);
 
+		pontosProximosFragment = new PontosProximosFragment(gps);
 		getSupportFragmentManager().beginTransaction()
-				.add(R.id.fragment_main, new PontosProximosFragment(gps), "Pontos Próximos").commit();
+				.add(R.id.fragment_main, pontosProximosFragment, "Pontos Próximos").commit();
 	}
 
 	private void carregaElementosDaTela() {
@@ -89,5 +91,9 @@ public class BusaoActivity extends FragmentActivity {
 	
 	public ViewGroup getMapViewContainer() {
 		return mapViewContainer;
+	}
+	
+	public void onClickMap(View v) {
+		
 	}
 }

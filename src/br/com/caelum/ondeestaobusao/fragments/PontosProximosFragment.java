@@ -2,6 +2,8 @@ package br.com.caelum.ondeestaobusao.fragments;
 
 import java.util.List;
 
+import android.os.AsyncTask;
+import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -27,6 +29,8 @@ public class PontosProximosFragment extends Fragment implements GPSObserver, Asy
 	private BusaoActivity activity;
 	private PontoExpandableListView pontosExpandableListView;
 	private View menuBottom;
+	private List<Ponto> pontos;
+	private AsyncTask<Coordenada, Void, List<Ponto>> pontosEOnibusTask;
 
 	public PontosProximosFragment(GPSControl gps) {
 		this.gps = gps;
@@ -52,12 +56,13 @@ public class PontosProximosFragment extends Fragment implements GPSObserver, Asy
 
 	@Override
 	public void callback(Coordenada coordenada) {
-		new PontosEOnibusTask(this).execute(coordenada);
+		pontosEOnibusTask = new PontosEOnibusTask(this).execute(coordenada);
 		activity.atualizaTextoDoProgress(R.string.buscando_pontos_proximos);
 	}
 
 	@Override
 	public void dealWithResult(final List<Ponto> pontos) {
+		this.pontos = pontos;
 		pontosExpandableListView.setAdapter(new PontosEOnibusAdapter(pontos, activity));
 
 		pontosExpandableListView.setOnChildClickListener(new OnChildClickListener() {
@@ -66,7 +71,7 @@ public class PontosProximosFragment extends Fragment implements GPSObserver, Asy
 				Onibus onibus = pontos.get(groupPosition).getOnibuses().get(childPosition);
 
 				getFragmentManager().beginTransaction()
-						.add(R.id.fragment_main, new MapaOnibusFragment(gps, onibus), onibus.getLetreiro())
+						.add(R.id.fragment_main, new MapaDoOnibusFragment(gps, onibus), onibus.toString())
 						.addToBackStack(null).remove(PontosProximosFragment.this).commit();
 				return false;
 			}
@@ -95,10 +100,19 @@ public class PontosProximosFragment extends Fragment implements GPSObserver, Asy
 	public void onDestroyView() {
 		super.onDestroyView();
 		
+		if (pontosEOnibusTask != null && Status.RUNNING.equals(pontosEOnibusTask.getStatus())) {
+			pontosEOnibusTask.cancel(true);
+		}
+		
 		ViewGroup parent = (ViewGroup) pontosExpandableListView.getParent();
 		if (parent != null) {
 			parent.removeView(pontosExpandableListView);
 		}
+
+	}
+
+	public List<Ponto> getPontos() {
+		return pontos;
 	}
 
 }

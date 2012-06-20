@@ -23,6 +23,7 @@ public class CoordenadaDoEnderecoTask extends AsyncTask<String, Void, Coordenada
 		
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Override
 	protected Coordenada doInBackground(String... params) {
 		try {
