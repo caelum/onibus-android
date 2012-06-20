@@ -20,7 +20,8 @@
     <ImageView
         android:id="@+id/map"
         style="@style/Action_Bottom_Menu"
-        android:background="@drawable/ic_map" />
+        android:background="@drawable/ic_map"
+        android:onClick="onClickMap" />
 
     <ImageView
         android:id="@+id/search"
