@@ -5,21 +5,22 @@ import java.util.ArrayList;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import br.com.caelum.ondeestaobusao.activity.R;
 
 import com.google.android.maps.ItemizedOverlay;
 import com.google.android.maps.OverlayItem;
 
-public class PontoOverlay extends ItemizedOverlay<OverlayItem> {
+public class PontoDoOnibusOverlay extends ItemizedOverlay<OverlayItem> {
 
 	private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
 	private Context mContext;
 
-	public PontoOverlay(Drawable drawable) {
+	public PontoDoOnibusOverlay(Drawable drawable) {
 		super(drawable);
 	}
 
-	public PontoOverlay(Context context, int drawable) {
-		super(boundCenterBottom(context.getResources().getDrawable(drawable)));
+	public PontoDoOnibusOverlay(Context context) {
+		super(boundCenterBottom(context.getResources().getDrawable(R.drawable.ic_bus_stop)));
 		mContext = context;
 	}
 

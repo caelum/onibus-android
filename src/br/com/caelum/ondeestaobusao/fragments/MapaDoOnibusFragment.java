@@ -2,7 +2,9 @@ package br.com.caelum.ondeestaobusao.fragments;
 
 import java.util.List;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.AsyncTask.Status;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +14,7 @@ import br.com.caelum.ondeestaobusao.activity.R;
 import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
 import br.com.caelum.ondeestaobusao.gps.GPSControl;
 import br.com.caelum.ondeestaobusao.gps.GPSObserver;
-import br.com.caelum.ondeestaobusao.map.PontoOverlay;
+import br.com.caelum.ondeestaobusao.map.PontoDoOnibusOverlay;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
 import br.com.caelum.ondeestaobusao.model.Onibus;
 import br.com.caelum.ondeestaobusao.model.Ponto;
@@ -23,17 +25,18 @@ import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
-public class MapaOnibusFragment extends Fragment implements GPSObserver, AsyncResultDelegate<List<Ponto>> {
+public class MapaDoOnibusFragment extends Fragment implements GPSObserver, AsyncResultDelegate<List<Ponto>> {
 
 	private MapView mapa;
 	private GPSControl gps;
 	private BusaoActivity activity;
 	private final Onibus onibus;
-	private PontoOverlay pontoOverlay;
+	private PontoDoOnibusOverlay pontoOverlay;
 	private List<Overlay> overlays;
 	private ViewGroup container;
+	private AsyncTask<Long, Void, List<Ponto>> pontosDoOnibusTask;
 
-	public MapaOnibusFragment(GPSControl gps, Onibus onibus) {
+	public MapaDoOnibusFragment(GPSControl gps, Onibus onibus) {
 		this.gps = gps;
 		this.onibus = onibus;
 	}
@@ -41,7 +44,7 @@ public class MapaOnibusFragment extends Fragment implements GPSObserver, AsyncRe
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle bundle) {
 		this.activity = (BusaoActivity) inflater.getContext();
-		this.activity.atualizaNomeFragment(onibus.getLetreiro());
+		this.activity.atualizaNomeFragment(onibus.toString());
 
 		container = this.activity.getMapViewContainer();
 		mapa = this.activity.getMapView();
@@ -59,7 +62,7 @@ public class MapaOnibusFragment extends Fragment implements GPSObserver, AsyncRe
 		mapa.setBuiltInZoomControls(true);
 
 		mapa.getController().setZoom(17);
-		pontoOverlay = new PontoOverlay(activity, R.drawable.ic_bus_stop);
+		pontoOverlay = new PontoDoOnibusOverlay(activity);
 		overlays = mapa.getOverlays();
 	}
 
@@ -75,7 +78,7 @@ public class MapaOnibusFragment extends Fragment implements GPSObserver, AsyncRe
 
 		activity.exibeProgress();
 		activity.atualizaTextoDoProgress(R.string.buscando_pontos_onibus);
-		new PontosDoOnibusTask(this).execute(onibus.getId());
+		pontosDoOnibusTask = new PontosDoOnibusTask(this).execute(onibus.getId());
 	}
 
 	@Override
@@ -100,6 +103,10 @@ public class MapaOnibusFragment extends Fragment implements GPSObserver, AsyncRe
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
+		
+		if (pontosDoOnibusTask != null && Status.RUNNING.equals(pontosDoOnibusTask.getStatus())) {
+			pontosDoOnibusTask.cancel(true);
+		}
 		
 		overlays.clear();
 		pontoOverlay.clear();
