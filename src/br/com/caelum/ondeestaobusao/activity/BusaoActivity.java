@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import br.com.caelum.ondeestaobusao.fragments.HeaderChanger;
 import br.com.caelum.ondeestaobusao.fragments.PontosProximosFragment;
 import br.com.caelum.ondeestaobusao.gps.GPSControl;
 import br.com.caelum.ondeestaobusao.gps.GPSObserver;
@@ -40,7 +41,7 @@ public class BusaoActivity extends FragmentActivity {
 		mapViewContainer = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.mapa, null);
 		mapView = (MapView) mapViewContainer.findViewById(R.id.map_view);
 
-		fragment = new PontosProximosFragment(this);
+		fragment = new PontosProximosFragment();
 		
 		getSupportFragmentManager().beginTransaction()
 				.add(R.id.fragment_main, fragment, "Pontos Próximos").commit();
@@ -61,7 +62,7 @@ public class BusaoActivity extends FragmentActivity {
 	}
 	
 	public void mudaFragment(Fragment origem, Fragment destino, String titulo) {
-		getSupportFragmentManager().beginTransaction()
+		origem.getFragmentManager().beginTransaction()
 			.add(R.id.fragment_main, destino, titulo)
 			.addToBackStack(null)
 			.remove(origem)
@@ -70,11 +71,10 @@ public class BusaoActivity extends FragmentActivity {
 		if (destino instanceof GPSObserver) {
 			gps.registerObserver((GPSObserver) destino);
 		}
-//		if (origem instanceof GPSObserver) {
-//			gps.unRegisterObserver((GPSObserver) origem);
-//		}
+		if (destino instanceof HeaderChanger) {
+			((HeaderChanger)destino).updateHeader(fragmentName);
+		}
 		
-		this.fragmentName.setText(titulo);
 	}
 	
 	public void atualizaTextoDoProgress(int string) {

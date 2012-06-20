@@ -9,8 +9,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import br.com.caelum.ondeestaobusao.activity.BusaoActivity;
 import br.com.caelum.ondeestaobusao.activity.R;
+import br.com.caelum.ondeestaobusao.activity.R.id;
 import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
 import br.com.caelum.ondeestaobusao.gps.GPSObserver;
 import br.com.caelum.ondeestaobusao.map.PontoDoOnibusOverlay;
@@ -23,7 +25,7 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 
-public class MapaDoOnibusFragment extends Fragment implements GPSObserver, AsyncResultDelegate<List<Ponto>> {
+public class MapaDoOnibusFragment extends Fragment implements GPSObserver, HeaderChanger, AsyncResultDelegate<List<Ponto>> {
 
 	private MapView mapa;
 	private BusaoActivity activity;
@@ -107,6 +109,12 @@ public class MapaDoOnibusFragment extends Fragment implements GPSObserver, Async
 		if (null != parentViewGroup) {
 			parentViewGroup.removeView(container);
 		}
+	}
+
+	@Override
+	public void updateHeader(View view) {
+		TextView titulo = (TextView) view.findViewById(id.fragment_name);
+		titulo.setText(onibus.toString());
 	}
 
 }
