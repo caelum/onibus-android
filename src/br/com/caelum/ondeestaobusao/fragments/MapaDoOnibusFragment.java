@@ -19,55 +19,29 @@ import br.com.caelum.ondeestaobusao.model.Onibus;
 import br.com.caelum.ondeestaobusao.model.Ponto;
 import br.com.caelum.ondeestaobusao.task.PontosDoOnibusTask;
 
-import com.google.android.maps.MapView;
-import com.google.android.maps.MyLocationOverlay;
-import com.google.android.maps.Overlay;
-
 public class MapaDoOnibusFragment extends GPSFragment implements AsyncResultDelegate<List<Ponto>> {
-
-	private MapView mapa;
+	private Mapa mapa;
 	private BusaoActivity activity;
 	private Onibus onibus;
-	private PontoDoOnibusOverlay pontoOverlay;
-	private List<Overlay> overlays;
-	private ViewGroup container;
 	private AsyncTask<Long, Void, List<Ponto>> pontosDoOnibusTask;
 	
 	public MapaDoOnibusFragment(BusaoActivity activity) {
 		super(activity.getGps());
-		
 		this.activity = activity;
-		container = activity.getMapViewContainer();
-		mapa = activity.getMapView();
-
-		configuraMapView();
+		this.mapa = new Mapa(activity);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup parent) {
 		this.onibus = (Onibus) getArguments().getSerializable(Extras.ONIBUS);
-		return container;
+		return mapa.getMapViewContainer();
 	}
 
-	private void configuraMapView() {
-		mapa = (MapView) container.findViewById(R.id.map_view);
-		mapa.displayZoomControls(true);
-		mapa.setBuiltInZoomControls(true);
-
-		mapa.getController().setZoom(17);
-		pontoOverlay = new PontoDoOnibusOverlay(activity);
-		overlays = mapa.getOverlays();
-	}
 
 	@Override
 	public void callback(Coordenada coordenada) {
-		mapa.getController().setCenter(coordenada.toGeoPoint());
-		mapa.getController().animateTo(coordenada.toGeoPoint());
-
-		MyLocationOverlay myLocationOverlay = new MyLocationOverlay(activity, mapa);
-		myLocationOverlay.enableCompass();
-		myLocationOverlay.enableMyLocation();
-		overlays.add(myLocationOverlay);
+		mapa.centralizaNa(coordenada);
+		mapa.habilitaBussula();
 
 		activity.exibeProgress();
 		activity.atualizaTextoDoProgress(R.string.buscando_pontos_onibus);
@@ -76,14 +50,17 @@ public class MapaDoOnibusFragment extends GPSFragment implements AsyncResultDele
 
 	@Override
 	public void dealWithResult(List<Ponto> pontos) {
+		PontoDoOnibusOverlay pontoOverlay = new PontoDoOnibusOverlay(activity);
+		
 		pontoOverlay.clear();
-
+		
 		for (Ponto ponto : pontos) {
 			pontoOverlay.addOverlay(ponto.toOverlayItem());
 		}
-		overlays.add(pontoOverlay);
-
-		mapa.invalidate();
+		
+		mapa.adicionaCamada(pontoOverlay);
+		mapa.redesenha();
+		
 		activity.escondeProgress();
 	}
 
@@ -100,13 +77,9 @@ public class MapaDoOnibusFragment extends GPSFragment implements AsyncResultDele
 			pontosDoOnibusTask.cancel(true);
 		}
 
-		overlays.clear();
-		pontoOverlay.clear();
+		mapa.limpa();
 
-		ViewGroup parentViewGroup = (ViewGroup) container.getParent();
-		if (null != parentViewGroup) {
-			parentViewGroup.removeView(container);
-		}
+		mapa.removeDaTela();
 	}
 
 	@Override

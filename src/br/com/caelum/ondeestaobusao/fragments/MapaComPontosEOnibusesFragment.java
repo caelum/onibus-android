@@ -15,52 +15,34 @@ import br.com.caelum.ondeestaobusao.map.PontoOverlayItem;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
 import br.com.caelum.ondeestaobusao.model.Ponto;
 
-import com.google.android.maps.MapView;
-import com.google.android.maps.Overlay;
-
 public class MapaComPontosEOnibusesFragment extends GPSFragment implements AsyncResultDelegate<List<Ponto>> {
-	private MapView mapa;
+	private Mapa nossoMapa;
 	private BusaoActivity activity;
 	private List<Ponto> pontos;
-	private List<Overlay> overlays;
-	private ViewGroup container;
-	private Coordenada coordenada;
-	private PontoComOnibusesOverlay pontoComOnibusesOverlay;
 
 	public MapaComPontosEOnibusesFragment(BusaoActivity activity, List<Ponto> pontos) {
 		super(activity.getGps());
-
 		this.activity = activity;
-		container = activity.getMapViewContainer();
-		mapa = activity.getMapView();
+		this.nossoMapa = new Mapa(activity);
 		this.pontos = pontos;
-		pontoComOnibusesOverlay = new PontoComOnibusesOverlay(activity);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup parent) {
-		return container;
+		return nossoMapa.getMapViewContainer();
 	}
 
-	private void configuraMapView() {
-		mapa = (MapView) container.findViewById(R.id.map_view);
-		mapa.displayZoomControls(true);
-		mapa.setBuiltInZoomControls(true);
-
-		mapa.getController().setCenter(coordenada.toGeoPoint());
-		mapa.getController().animateTo(coordenada.toGeoPoint());
-		mapa.getController().setZoom(17);
-		overlays = mapa.getOverlays();
-	}
 
 	@Override
 	public void dealWithResult(List<Ponto> pontos) {
-		for (Ponto ponto : pontos) {
-			pontoComOnibusesOverlay.addOverlay(new PontoOverlayItem(ponto));
-		}
+		PontoComOnibusesOverlay overlay = new PontoComOnibusesOverlay(activity);
 		
-		overlays.add(pontoComOnibusesOverlay);
-		mapa.invalidate();
+		for (Ponto ponto : pontos) {
+			overlay.addOverlay(new PontoOverlayItem(ponto));
+		}
+		nossoMapa.adicionaCamada(overlay);
+		nossoMapa.redesenha();
+		
 		activity.escondeProgress();
 	}
 
@@ -73,12 +55,8 @@ public class MapaComPontosEOnibusesFragment extends GPSFragment implements Async
 	public void onDestroyView() {
 		super.onDestroyView();
 
-		overlays.clear();
-
-		ViewGroup parentViewGroup = (ViewGroup) container.getParent();
-		if (null != parentViewGroup) {
-			parentViewGroup.removeView(container);
-		}
+		nossoMapa.limpa();
+		nossoMapa.removeDaTela();
 	}
 
 	@Override
@@ -89,8 +67,8 @@ public class MapaComPontosEOnibusesFragment extends GPSFragment implements Async
 
 	@Override
 	public void callback(Coordenada coordenada) {
-		this.coordenada = coordenada;
-		configuraMapView();
+		this.nossoMapa.centralizaNa(coordenada);
+		
 		dealWithResult(pontos);
 	}
 }
