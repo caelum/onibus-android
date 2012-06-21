@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.graphics.drawable.Drawable;
+import br.com.caelum.ondeestaobusao.activity.R;
 import br.com.caelum.ondeestaobusao.model.Ponto;
 
 import com.google.android.maps.ItemizedOverlay;
@@ -21,8 +22,8 @@ public class PontoComOnibusesOverlay extends ItemizedOverlay<PontoOverlayItem> {
 		super(drawable);
 	}
 
-	public PontoComOnibusesOverlay(Drawable defaultMarker, Context context) {
-		super(boundCenterBottom(defaultMarker));
+	public PontoComOnibusesOverlay(Context context) {
+		super(boundCenterBottom(context.getResources().getDrawable(R.drawable.ic_pin_bus)));
 		mContext = context;
 	}
 

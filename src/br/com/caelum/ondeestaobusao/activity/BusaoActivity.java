@@ -1,16 +1,14 @@
 package br.com.caelum.ondeestaobusao.activity;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import br.com.caelum.ondeestaobusao.fragments.HeaderChanger;
+import br.com.caelum.ondeestaobusao.fragments.MapaComPontosEOnibusesFragment;
 import br.com.caelum.ondeestaobusao.fragments.PontosProximosFragment;
 import br.com.caelum.ondeestaobusao.gps.GPSControl;
-import br.com.caelum.ondeestaobusao.gps.GPSObserver;
 import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
 import br.com.caelum.ondeestaobusao.widget.AppRater;
 
@@ -21,10 +19,9 @@ public class BusaoActivity extends FragmentActivity {
 	private GPSControl gps;
 	private TextView textProgressBar;
 	private View progressBar;
-	private TextView fragmentName;
 	private ViewGroup mapViewContainer;
 	private MapView mapView;
-	private PontosProximosFragment fragment;
+	private PontosProximosFragment pontosProximosFragment;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,40 +38,23 @@ public class BusaoActivity extends FragmentActivity {
 		mapViewContainer = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.mapa, null);
 		mapView = (MapView) mapViewContainer.findViewById(R.id.map_view);
 
-		fragment = new PontosProximosFragment();
+		pontosProximosFragment = new PontosProximosFragment();
 		
 		getSupportFragmentManager().beginTransaction()
-				.add(R.id.fragment_main, fragment, "Pontos Próximos").commit();
+				.add(R.id.fragment_main, pontosProximosFragment, pontosProximosFragment.getClass().getName()).commit();
 		
-		gps.registerObserver(fragment);
+		gps.registerObserver(pontosProximosFragment);
 	}
 
 	private void carregaElementosDaTela() {
 		progressBar = findViewById(R.id.progress_bar);
 		textProgressBar = (TextView) findViewById(R.id.progress_text);
-		fragmentName = (TextView) findViewById(R.id.fragment_name);
 	}
 
 	@Override
 	public void finish() {
 		gps.shutdown();
 		super.finish();
-	}
-	
-	public void mudaFragment(Fragment origem, Fragment destino, String titulo) {
-		origem.getFragmentManager().beginTransaction()
-			.add(R.id.fragment_main, destino, titulo)
-			.addToBackStack(null)
-			.remove(origem)
-		.commit();
-		
-		if (destino instanceof GPSObserver) {
-			gps.registerObserver((GPSObserver) destino);
-		}
-		if (destino instanceof HeaderChanger) {
-			((HeaderChanger)destino).updateHeader(fragmentName);
-		}
-		
 	}
 	
 	public void atualizaTextoDoProgress(int string) {
@@ -111,7 +91,16 @@ public class BusaoActivity extends FragmentActivity {
 		return mapViewContainer;
 	}
 	
+	public GPSControl getGps() {
+		return gps;
+	}
+	
 	public void onClickMap(View v) {
+		MapaComPontosEOnibusesFragment mapaComPontosEOnibusesFragment = (MapaComPontosEOnibusesFragment) getSupportFragmentManager().findFragmentByTag(MapaComPontosEOnibusesFragment.class.getName());
+		if (mapaComPontosEOnibusesFragment == null) {
+			mapaComPontosEOnibusesFragment = new MapaComPontosEOnibusesFragment(this, this.pontosProximosFragment.getPontos());
+		}
 		
+		this.pontosProximosFragment.vaiPara(mapaComPontosEOnibusesFragment, mapaComPontosEOnibusesFragment.getClass().getName());
 	}
 }

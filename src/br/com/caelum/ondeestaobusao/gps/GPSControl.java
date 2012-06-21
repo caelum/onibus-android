@@ -94,5 +94,9 @@ public class GPSControl {
 	public void unRegisterObserver(GPSObserver observer) {
 		this.observers.remove(observer);
 	}
+	
+	public Coordenada getAtual() {
+		return atual;
+	}
 
 }
