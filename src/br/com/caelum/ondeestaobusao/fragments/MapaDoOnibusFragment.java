@@ -13,7 +13,6 @@ import br.com.caelum.ondeestaobusao.activity.R;
 import br.com.caelum.ondeestaobusao.activity.R.id;
 import br.com.caelum.ondeestaobusao.constants.Extras;
 import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
-import br.com.caelum.ondeestaobusao.gps.GPSObserver;
 import br.com.caelum.ondeestaobusao.map.PontoDoOnibusOverlay;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
 import br.com.caelum.ondeestaobusao.model.Onibus;
@@ -24,7 +23,7 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.MyLocationOverlay;
 import com.google.android.maps.Overlay;
 
-public class MapaDoOnibusFragment extends BaseFragment implements GPSObserver, AsyncResultDelegate<List<Ponto>> {
+public class MapaDoOnibusFragment extends GPSFragment implements AsyncResultDelegate<List<Ponto>> {
 
 	private MapView mapa;
 	private BusaoActivity activity;
@@ -35,7 +34,7 @@ public class MapaDoOnibusFragment extends BaseFragment implements GPSObserver, A
 	private AsyncTask<Long, Void, List<Ponto>> pontosDoOnibusTask;
 	
 	public MapaDoOnibusFragment(BusaoActivity activity) {
-		super();
+		super(activity.getGps());
 		
 		this.activity = activity;
 		container = activity.getMapViewContainer();

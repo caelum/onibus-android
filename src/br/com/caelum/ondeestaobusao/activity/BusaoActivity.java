@@ -38,7 +38,7 @@ public class BusaoActivity extends FragmentActivity {
 		mapViewContainer = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.mapa, null);
 		mapView = (MapView) mapViewContainer.findViewById(R.id.map_view);
 
-		pontosProximosFragment = new PontosProximosFragment();
+		pontosProximosFragment = new PontosProximosFragment(gps);
 		
 		getSupportFragmentManager().beginTransaction()
 				.add(R.id.fragment_main, pontosProximosFragment, pontosProximosFragment.getClass().getName()).commit();

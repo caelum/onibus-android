@@ -3,8 +3,8 @@ package br.com.caelum.ondeestaobusao.fragments;
 import java.util.List;
 
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.AsyncTask.Status;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,14 +17,18 @@ import br.com.caelum.ondeestaobusao.activity.R.id;
 import br.com.caelum.ondeestaobusao.adapter.PontosEOnibusAdapter;
 import br.com.caelum.ondeestaobusao.constants.Extras;
 import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
-import br.com.caelum.ondeestaobusao.gps.GPSObserver;
+import br.com.caelum.ondeestaobusao.gps.GPSControl;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
 import br.com.caelum.ondeestaobusao.model.Onibus;
 import br.com.caelum.ondeestaobusao.model.Ponto;
 import br.com.caelum.ondeestaobusao.task.PontosEOnibusTask;
 import br.com.caelum.ondeestaobusao.widget.PontoExpandableListView;
 
-public class PontosProximosFragment extends BaseFragment implements GPSObserver, AsyncResultDelegate<List<Ponto>> {
+public class PontosProximosFragment extends GPSFragment implements AsyncResultDelegate<List<Ponto>> {
+
+	public PontosProximosFragment(GPSControl gps) {
+		super(gps);
+	}
 
 	private PontoExpandableListView pontosExpandableListView;
 	private View menuBottom;
