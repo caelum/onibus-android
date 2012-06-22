@@ -14,6 +14,7 @@ import br.com.caelum.ondeestaobusao.map.PontoComOnibusesOverlay;
 import br.com.caelum.ondeestaobusao.map.PontoOverlayItem;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
 import br.com.caelum.ondeestaobusao.model.Ponto;
+import br.com.caelum.ondeestaobusao.task.PontosEOnibusTask;
 
 public class MapaComPontosEOnibusesFragment extends GPSFragment implements AsyncResultDelegate<List<Ponto>> {
 	private Mapa nossoMapa;
@@ -35,7 +36,7 @@ public class MapaComPontosEOnibusesFragment extends GPSFragment implements Async
 
 	@Override
 	public void dealWithResult(List<Ponto> pontos) {
-		PontoComOnibusesOverlay overlay = new PontoComOnibusesOverlay(activity);
+		PontoComOnibusesOverlay overlay = new PontoComOnibusesOverlay(activity, this);
 		
 		for (Ponto ponto : pontos) {
 			overlay.addOverlay(new PontoOverlayItem(ponto));
@@ -69,6 +70,20 @@ public class MapaComPontosEOnibusesFragment extends GPSFragment implements Async
 	public void callback(Coordenada coordenada) {
 		this.nossoMapa.centralizaNa(coordenada);
 		
-		dealWithResult(pontos);
+		if (pontos != null) {
+			dealWithResult(pontos);
+		} else {
+			new PontosEOnibusTask(this).execute(coordenada);
+			activity.atualizaTextoDoProgress(R.string.buscando_pontos_proximos);
+		}
+	}
+
+	//TODO REVISAR ERICH	
+	public void finaliza(Ponto ponto) {
+		PontosProximosFragment pontosProximosFragment = (PontosProximosFragment) this.getFragmentManager().findFragmentByTag(PontosProximosFragment.class.getName());
+		pontosProximosFragment.selecionaPonto(ponto);
+		
+		this.getFragmentManager().beginTransaction().remove(this).commit();
+		this.getFragmentManager().popBackStackImmediate();
 	}
 }

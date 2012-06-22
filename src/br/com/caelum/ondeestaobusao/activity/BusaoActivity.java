@@ -101,6 +101,6 @@ public class BusaoActivity extends FragmentActivity {
 			mapaComPontosEOnibusesFragment = new MapaComPontosEOnibusesFragment(this, this.pontosProximosFragment.getPontos());
 		}
 		
-		this.pontosProximosFragment.vaiPara(mapaComPontosEOnibusesFragment, mapaComPontosEOnibusesFragment.getClass().getName());
+		this.pontosProximosFragment.vaiPara(mapaComPontosEOnibusesFragment, MapaComPontosEOnibusesFragment.class.getName());
 	}
 }

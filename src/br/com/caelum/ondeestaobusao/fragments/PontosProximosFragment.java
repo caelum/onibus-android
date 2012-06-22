@@ -125,4 +125,19 @@ public class PontosProximosFragment extends GPSFragment implements AsyncResultDe
 		titulo.setText("Pontos Proximos");
 	}
 
+	public void selecionaPonto(Ponto ponto) {
+		if (pontos != null) {
+			for (int i=0; i < pontos.size(); i++) {
+				if (ponto.equals(pontos.get(i))) {
+					pontosExpandableListView.expandGroup(i);
+				} else {
+					if (pontosExpandableListView.isGroupExpanded(i)) {
+						pontosExpandableListView.collapseGroup(i);
+					}
+				}
+			}
+		}
+		
+	}
+
 }

@@ -21,7 +21,7 @@ public abstract class BaseFragment extends Fragment implements HeaderChanger {
 	
 	public void vaiPara(Fragment destino, String titulo) {
 		getFragmentManager().beginTransaction()
-			.add(R.id.fragment_main, destino, this.getClass().getName())
+			.add(R.id.fragment_main, destino, destino.getClass().getName())
 			.addToBackStack(null)
 			.remove(this)
 		.commit();
