@@ -74,10 +74,10 @@ public class BusaoActivity extends FragmentActivity {
 		exibeProgress();
 	}
 	
-	@Override
-	protected boolean isRouteDisplayed() {
-		return false;
-	}
+//	@Override
+//	protected boolean isRouteDisplayed() {
+//		return false;
+//	}
 
 	public void dealWithError() {
 		new AlertDialogBuilder(this).build().show();

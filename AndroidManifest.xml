@@ -16,10 +16,10 @@
         android:label="@string/app_name"
         android:theme="@style/BusaoTheme" >
         <activity
-            android:name=".BusaoActivity"
-            android:label="@string/app_name"
-            android:configChanges="orientation">
-            
+            android:name=".MainActivity"
+            android:configChanges="orientation"
+            android:label="@string/pontos_proximos"
+            android:uiOptions="splitActionBarWhenNarrow" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

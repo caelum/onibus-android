@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="BusaoTheme" parent="@android:style/Theme.Black.NoTitleBar" />
     <style name="BusaoTheme.ProgressBarBackground">
 		<item name="android:background">#96000000</item>
+    </style>
+    <style name="BusaoTheme" parent="Theme.Sherlock">
     </style>
     
 </resources>
