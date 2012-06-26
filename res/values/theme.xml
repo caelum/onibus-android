@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="BusaoTheme.ProgressBarBackground">
-		<item name="android:background">#96000000</item>
+        <item name="android:background">#96000000</item>
     </style>
+
     <style name="BusaoTheme" parent="Theme.Sherlock">
+        <item name="actionBarStyle">@style/Widget.BusaoTheme.ActionBar</item>
+        <item name="android:actionBarStyle">@style/Widget.BusaoTheme.ActionBar</item>
     </style>
-    
+
+    <style name="Widget.BusaoTheme.ActionBar" parent="Widget.Sherlock.ActionBar">
+        <item name="background">@drawable/ic_bar_background</item>
+        <item name="android:background">@drawable/ic_bar_background</item>
+        
+        <item name="backgroundSplit">@drawable/ic_bar_background</item>
+        <item name="android:backgroundSplit">@drawable/ic_bar_background</item>
+    </style>
+
 </resources>

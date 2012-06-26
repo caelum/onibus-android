@@ -7,10 +7,8 @@ import android.os.AsyncTask.Status;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import br.com.caelum.ondeestaobusao.activity.BusaoActivity;
 import br.com.caelum.ondeestaobusao.activity.R;
-import br.com.caelum.ondeestaobusao.activity.R.id;
 import br.com.caelum.ondeestaobusao.constants.Extras;
 import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
 import br.com.caelum.ondeestaobusao.map.PontoDoOnibusOverlay;
@@ -84,8 +82,8 @@ public class MapaDoOnibusFragment extends GPSFragment implements AsyncResultDele
 
 	@Override
 	public void updateHeader(View view) {
-		TextView titulo = (TextView) view.findViewById(id.fragment_name);
-		titulo.setText(onibus.toString());
+		getSherlockActivity().getSupportActionBar().setTitle(onibus.getLetreiro());
+		getSherlockActivity().getSupportActionBar().setSubtitle(onibus.getSentido().toString());
 	}
 
 }

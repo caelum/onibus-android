@@ -38,16 +38,8 @@ public class Onibus implements Serializable {
 		return codigoGPS;
 	}
 
-	private String verificaDestino() {
-		if (this.sentido != null) {
-			return this.sentido.getCodigo() == 1 ? this.sentido.getTerminalPartida() : this.sentido
-					.getTerminalSecundario();
-		}
-		return "";
-	}
-
 	public String toString() {
-		return this.letreiro + "   " + this.verificaDestino();
+		return this.letreiro + " - " + this.sentido;
 	}
 
 }

@@ -2,6 +2,9 @@ package br.com.caelum.ondeestaobusao.fragments;
 
 import java.util.List;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
@@ -10,10 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.TextView;
 import br.com.caelum.ondeestaobusao.activity.BusaoActivity;
 import br.com.caelum.ondeestaobusao.activity.R;
-import br.com.caelum.ondeestaobusao.activity.R.id;
 import br.com.caelum.ondeestaobusao.adapter.PontosEOnibusAdapter;
 import br.com.caelum.ondeestaobusao.constants.Extras;
 import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
@@ -25,21 +26,17 @@ import br.com.caelum.ondeestaobusao.task.PontosEOnibusTask;
 import br.com.caelum.ondeestaobusao.widget.PontoExpandableListView;
 
 public class PontosProximosFragment extends GPSFragment implements AsyncResultDelegate<List<Ponto>> {
-
 	public PontosProximosFragment(GPSControl gps) {
 		super(gps);
 	}
-
+	
 	private PontoExpandableListView pontosExpandableListView;
-	private View menuBottom;
 	private List<Ponto> pontos;
 	private AsyncTask<Coordenada, Void, List<Ponto>> pontosEOnibusTask;
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup parent) {
 		if (pontosExpandableListView == null) {
-			menuBottom = getActivity().findViewById(R.id.action_bottom);
-
 			pontosExpandableListView = (PontoExpandableListView) inflater.inflate(R.layout.pontos_e_onibuses, parent,
 					false);
 			pontosExpandableListView.setVisibility(View.GONE);
@@ -64,17 +61,18 @@ public class PontosProximosFragment extends GPSFragment implements AsyncResultDe
 			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 				Onibus onibus = pontos.get(groupPosition).getOnibuses().get(childPosition);
 
-				MapaDoOnibusFragment mapaDoOnibusFragment = (MapaDoOnibusFragment) getFragmentManager().findFragmentByTag(MapaDoOnibusFragment.class.getName());
-				
+				MapaDoOnibusFragment mapaDoOnibusFragment = (MapaDoOnibusFragment) getFragmentManager()
+						.findFragmentByTag(MapaDoOnibusFragment.class.getName());
+
 				if (mapaDoOnibusFragment == null) {
 					mapaDoOnibusFragment = new MapaDoOnibusFragment(((BusaoActivity) getActivity()));
 				}
-				
+
 				Bundle bundle = new Bundle();
 				bundle.putSerializable(Extras.ONIBUS, onibus);
-				
+
 				mapaDoOnibusFragment.setArguments(bundle);
-				
+
 				PontosProximosFragment.this.vaiPara(mapaDoOnibusFragment, onibus.toString());
 
 				return false;
@@ -92,18 +90,17 @@ public class PontosProximosFragment extends GPSFragment implements AsyncResultDe
 	@Override
 	public void onPause() {
 		super.onPause();
-		menuBottom.setVisibility(View.GONE);
 	}
 
 	public void onResume() {
 		super.onResume();
-		menuBottom.setVisibility(View.VISIBLE);
 	}
 
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-
+		super.onDestroyOptionsMenu();
+		
 		if (pontosEOnibusTask != null && Status.RUNNING.equals(pontosEOnibusTask.getStatus())) {
 			pontosEOnibusTask.cancel(true);
 		}
@@ -118,16 +115,21 @@ public class PontosProximosFragment extends GPSFragment implements AsyncResultDe
 	public List<Ponto> getPontos() {
 		return pontos;
 	}
-
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		setHasOptionsMenu(true);
+		inflater.inflate(R.menu.menu_split_principal, menu);
+	}
+	
 	@Override
 	public void updateHeader(View view) {
-		TextView titulo = (TextView) view.findViewById(id.fragment_name);
-		titulo.setText("Pontos Proximos");
+		getSherlockActivity().getSupportActionBar().setTitle(getString(R.string.pontos_proximos));
 	}
 
 	public void selecionaPonto(Ponto ponto) {
 		if (pontos != null) {
-			for (int i=0; i < pontos.size(); i++) {
+			for (int i = 0; i < pontos.size(); i++) {
 				if (ponto.equals(pontos.get(i))) {
 					pontosExpandableListView.expandGroup(i);
 				} else {
@@ -137,7 +139,6 @@ public class PontosProximosFragment extends GPSFragment implements AsyncResultDe
 				}
 			}
 		}
-		
-	}
 
+	}
 }

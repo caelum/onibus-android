@@ -7,7 +7,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import br.com.caelum.ondeestaobusao.activity.R;
 
-public abstract class BaseFragment extends Fragment implements HeaderChanger {
+import com.actionbarsherlock.app.SherlockFragment;
+
+public abstract class BaseFragment extends SherlockFragment implements HeaderChanger {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle bundle) {

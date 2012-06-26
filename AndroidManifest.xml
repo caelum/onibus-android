@@ -16,7 +16,7 @@
         android:label="@string/app_name"
         android:theme="@style/BusaoTheme" >
         <activity
-            android:name=".MainActivity"
+            android:name=".BusaoActivity"
             android:configChanges="orientation"
             android:label="@string/pontos_proximos"
             android:uiOptions="splitActionBarWhenNarrow" >

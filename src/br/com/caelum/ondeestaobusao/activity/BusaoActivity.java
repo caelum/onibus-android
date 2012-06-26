@@ -1,20 +1,19 @@
 package br.com.caelum.ondeestaobusao.activity;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import br.com.caelum.ondeestaobusao.fragments.MapaComPontosEOnibusesFragment;
 import br.com.caelum.ondeestaobusao.fragments.PontosProximosFragment;
 import br.com.caelum.ondeestaobusao.gps.GPSControl;
 import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
 import br.com.caelum.ondeestaobusao.widget.AppRater;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.google.android.maps.MapView;
 
-public class BusaoActivity extends FragmentActivity {
+public class BusaoActivity extends SherlockFragmentActivity {
 
 	private GPSControl gps;
 	private TextView textProgressBar;
@@ -35,8 +34,8 @@ public class BusaoActivity extends FragmentActivity {
 
 		AppRater.app_launched(this);
 		
-		mapViewContainer = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.mapa, null);
-		mapView = (MapView) mapViewContainer.findViewById(R.id.map_view);
+//		mapViewContainer = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.mapa, null);
+//		mapView = (MapView) mapViewContainer.findViewById(R.id.map_view);
 
 		pontosProximosFragment = new PontosProximosFragment(gps);
 		
@@ -78,7 +77,7 @@ public class BusaoActivity extends FragmentActivity {
 //	protected boolean isRouteDisplayed() {
 //		return false;
 //	}
-
+	
 	public void dealWithError() {
 		new AlertDialogBuilder(this).build().show();
 	}
@@ -95,12 +94,12 @@ public class BusaoActivity extends FragmentActivity {
 		return gps;
 	}
 	
-	public void onClickMap(View v) {
-		MapaComPontosEOnibusesFragment mapaComPontosEOnibusesFragment = (MapaComPontosEOnibusesFragment) getSupportFragmentManager().findFragmentByTag(MapaComPontosEOnibusesFragment.class.getName());
-		if (mapaComPontosEOnibusesFragment == null) {
-			mapaComPontosEOnibusesFragment = new MapaComPontosEOnibusesFragment(this, this.pontosProximosFragment.getPontos());
-		}
-		
-		this.pontosProximosFragment.vaiPara(mapaComPontosEOnibusesFragment, MapaComPontosEOnibusesFragment.class.getName());
-	}
+//	public void onClickMap(View v) {
+//		MapaComPontosEOnibusesFragment mapaComPontosEOnibusesFragment = (MapaComPontosEOnibusesFragment) getSupportFragmentManager().findFragmentByTag(MapaComPontosEOnibusesFragment.class.getName());
+//		if (mapaComPontosEOnibusesFragment == null) {
+//			mapaComPontosEOnibusesFragment = new MapaComPontosEOnibusesFragment(this, this.pontosProximosFragment.getPontos());
+//		}
+//		
+//		this.pontosProximosFragment.vaiPara(mapaComPontosEOnibusesFragment, MapaComPontosEOnibusesFragment.class.getName());
+//	}
 }

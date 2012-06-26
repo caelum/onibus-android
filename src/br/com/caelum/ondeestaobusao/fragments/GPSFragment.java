@@ -18,11 +18,9 @@ public abstract class GPSFragment extends BaseFragment implements GPSObserver {
 	public View onCreateView(LayoutInflater inflater, ViewGroup viewGroup, Bundle bundle) {
 		View view = super.onCreateView(inflater, viewGroup, bundle);
 		this.gps.registerObserver(this);
-		
 		return view;
 	}
 	
-	@Override
 	public void onDestroyView() {
 		gps.unRegisterObserver(this);
 		super.onDestroyView();
