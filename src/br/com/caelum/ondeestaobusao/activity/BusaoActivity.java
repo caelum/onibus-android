@@ -34,8 +34,8 @@ public class BusaoActivity extends SherlockFragmentActivity {
 
 		AppRater.app_launched(this);
 		
-//		mapViewContainer = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.mapa, null);
-//		mapView = (MapView) mapViewContainer.findViewById(R.id.map_view);
+		mapViewContainer = (ViewGroup) LayoutInflater.from(this).inflate(R.layout.mapa, null);
+		mapView = (MapView) mapViewContainer.findViewById(R.id.map_view);
 
 		pontosProximosFragment = new PontosProximosFragment(gps);
 		

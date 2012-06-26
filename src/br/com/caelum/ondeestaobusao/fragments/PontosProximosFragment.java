@@ -2,9 +2,6 @@ package br.com.caelum.ondeestaobusao.fragments;
 
 import java.util.List;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
@@ -25,14 +22,20 @@ import br.com.caelum.ondeestaobusao.model.Ponto;
 import br.com.caelum.ondeestaobusao.task.PontosEOnibusTask;
 import br.com.caelum.ondeestaobusao.widget.PontoExpandableListView;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+
 public class PontosProximosFragment extends GPSFragment implements AsyncResultDelegate<List<Ponto>> {
-	public PontosProximosFragment(GPSControl gps) {
-		super(gps);
-	}
-	
 	private PontoExpandableListView pontosExpandableListView;
 	private List<Ponto> pontos;
 	private AsyncTask<Coordenada, Void, List<Ponto>> pontosEOnibusTask;
+
+	public PontosProximosFragment(GPSControl gps) {
+		super(gps);
+		setHasOptionsMenu(true);	
+	}
+	
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup parent) {
@@ -40,7 +43,6 @@ public class PontosProximosFragment extends GPSFragment implements AsyncResultDe
 			pontosExpandableListView = (PontoExpandableListView) inflater.inflate(R.layout.pontos_e_onibuses, parent,
 					false);
 			pontosExpandableListView.setVisibility(View.GONE);
-
 		}
 		return pontosExpandableListView;
 	}
@@ -118,13 +120,28 @@ public class PontosProximosFragment extends GPSFragment implements AsyncResultDe
 	
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		setHasOptionsMenu(true);
 		inflater.inflate(R.menu.menu_split_principal, menu);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.menu_mapa) {
+			MapaComPontosEOnibusesFragment mapaComPontosEOnibusesFragment = (MapaComPontosEOnibusesFragment) getFragmentManager().findFragmentByTag(MapaComPontosEOnibusesFragment.class.getName());
+			if (mapaComPontosEOnibusesFragment == null) {
+				mapaComPontosEOnibusesFragment = new MapaComPontosEOnibusesFragment((BusaoActivity) getActivity(), pontos);
+			}
+			this.vaiPara(mapaComPontosEOnibusesFragment, mapaComPontosEOnibusesFragment.getClass().getName());
+			return true;
+		} else if (item.getItemId() == R.id.menu_atualizar) {
+			
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	@Override
 	public void updateHeader(View view) {
 		getSherlockActivity().getSupportActionBar().setTitle(getString(R.string.pontos_proximos));
+		getSherlockActivity().getSupportActionBar().setSubtitle(null);
 	}
 
 	public void selecionaPonto(Ponto ponto) {
