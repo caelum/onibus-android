@@ -60,6 +60,7 @@ public class MapaComPontosEOnibusesFragment extends GPSFragment implements Async
 	@Override
 	public void updateHeader(View view) {
 		getSherlockActivity().getSupportActionBar().setTitle(getString(R.string.procure_no_mapa));
+		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
 	@Override

@@ -142,6 +142,7 @@ public class PontosProximosFragment extends GPSFragment implements AsyncResultDe
 	public void updateHeader(View view) {
 		getSherlockActivity().getSupportActionBar().setTitle(getString(R.string.pontos_proximos));
 		getSherlockActivity().getSupportActionBar().setSubtitle(null);
+		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 	}
 
 	public void selecionaPonto(Ponto ponto) {

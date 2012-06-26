@@ -84,6 +84,7 @@ public class MapaDoOnibusFragment extends GPSFragment implements AsyncResultDele
 	public void updateHeader(View view) {
 		getSherlockActivity().getSupportActionBar().setTitle(onibus.getLetreiro());
 		getSherlockActivity().getSupportActionBar().setSubtitle(onibus.getSentido().toString());
+		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 	}
 
 }

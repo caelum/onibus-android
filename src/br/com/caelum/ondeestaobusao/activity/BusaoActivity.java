@@ -10,7 +10,9 @@ import br.com.caelum.ondeestaobusao.gps.GPSControl;
 import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
 import br.com.caelum.ondeestaobusao.widget.AppRater;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.google.android.maps.MapView;
 
 public class BusaoActivity extends SherlockFragmentActivity {
@@ -28,7 +30,7 @@ public class BusaoActivity extends SherlockFragmentActivity {
 		setContentView(R.layout.main);
 
 		carregaElementosDaTela();
-
+		
 		gps = new GPSControl(this);
 		gps.execute();
 
@@ -43,11 +45,16 @@ public class BusaoActivity extends SherlockFragmentActivity {
 				.add(R.id.fragment_main, pontosProximosFragment, pontosProximosFragment.getClass().getName()).commit();
 		
 		gps.registerObserver(pontosProximosFragment);
+		
 	}
 
 	private void carregaElementosDaTela() {
 		progressBar = findViewById(R.id.progress_bar);
 		textProgressBar = (TextView) findViewById(R.id.progress_text);
+		
+		View share = LayoutInflater.from(this).inflate(R.layout.ic_share, null);
+        getSupportActionBar().setCustomView(share);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
 	}
 
 	@Override
@@ -73,10 +80,17 @@ public class BusaoActivity extends SherlockFragmentActivity {
 		exibeProgress();
 	}
 	
-//	@Override
-//	protected boolean isRouteDisplayed() {
-//		return false;
-//	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == android.R.id.home) {
+			if ((getSupportActionBar().getDisplayOptions() & ActionBar.DISPLAY_HOME_AS_UP) != 0) {
+				onBackPressed();
+			}
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
 	
 	public void dealWithError() {
 		new AlertDialogBuilder(this).build().show();
