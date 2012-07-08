@@ -69,6 +69,8 @@ public class PontosProximosFragment extends GPSFragment implements AsyncResultDe
 				if (mapaDoOnibusFragment == null) {
 					mapaDoOnibusFragment = new MapaDoOnibusFragment(((BusaoActivity) getActivity()));
 				}
+				
+				//TODO ERA PRA SER UMA UNICA INSTANCIA!!
 
 				Bundle bundle = new Bundle();
 				bundle.putSerializable(Extras.ONIBUS, onibus);

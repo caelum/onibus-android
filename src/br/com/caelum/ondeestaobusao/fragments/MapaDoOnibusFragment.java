@@ -2,6 +2,7 @@ package br.com.caelum.ondeestaobusao.fragments;
 
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.view.LayoutInflater;
@@ -16,7 +17,13 @@ import br.com.caelum.ondeestaobusao.model.Coordenada;
 import br.com.caelum.ondeestaobusao.model.Onibus;
 import br.com.caelum.ondeestaobusao.model.Ponto;
 import br.com.caelum.ondeestaobusao.task.PontosDoOnibusTask;
+import br.com.caelum.ondeestaobusao.widgets.actionbar.BusaoNoMapa;
+import br.com.caelum.ondeestaobusao.widgets.actionbar.BusaoNoMapaListener;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.Tab;
+
+@SuppressLint("ValidFragment")
 public class MapaDoOnibusFragment extends GPSFragment implements AsyncResultDelegate<List<Ponto>> {
 	private Mapa mapa;
 	private BusaoActivity activity;
@@ -27,11 +34,33 @@ public class MapaDoOnibusFragment extends GPSFragment implements AsyncResultDele
 		super(activity.getGps());
 		this.activity = activity;
 		this.mapa = new Mapa(activity);
+		
+		activity.getSupportActionBar().setNavigationMode(
+				ActionBar.NAVIGATION_MODE_TABS);
+		
+		BusaoNoMapaListener listener = new BusaoNoMapaListener(mapa);
+		ActionBar actionBar = activity.getSupportActionBar();
+		
+		actionBar.removeAllTabs();
+		
+		Tab itinerario = actionBar.newTab();
+		itinerario.setText("Itinerarios");
+		itinerario.setTag(BusaoNoMapa.ITINERARIO);
+		itinerario.setTabListener(listener);
+		actionBar.addTab(itinerario, true);
+		
+		Tab tempoReal = actionBar.newTab();
+		tempoReal.setText("Tempo real");
+		tempoReal.setTag(BusaoNoMapa.TEMPO_REAL);
+		tempoReal.setTabListener(listener);
+		actionBar.addTab(tempoReal);
+		
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup parent) {
 		this.onibus = (Onibus) getArguments().getSerializable(Extras.ONIBUS);
+		
 		return mapa.getMapViewContainer();
 	}
 
@@ -75,6 +104,9 @@ public class MapaDoOnibusFragment extends GPSFragment implements AsyncResultDele
 			pontosDoOnibusTask.cancel(true);
 		}
 
+		getSherlockActivity().getSupportActionBar().setNavigationMode(
+				ActionBar.NAVIGATION_MODE_STANDARD);
+		
 		mapa.limpa();
 
 		mapa.removeDaTela();

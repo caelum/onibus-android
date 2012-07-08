@@ -46,6 +46,8 @@ public class BusaoActivity extends SherlockFragmentActivity {
 		
 		gps.registerObserver(pontosProximosFragment);
 		
+		
+		
 	}
 
 	private void carregaElementosDaTela() {
