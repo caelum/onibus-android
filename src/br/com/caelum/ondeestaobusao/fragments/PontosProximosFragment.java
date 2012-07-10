@@ -5,6 +5,7 @@ import java.util.List;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,19 +60,19 @@ public class PontosProximosFragment extends GPSFragment implements AsyncResultDe
 		pontosExpandableListView.setAdapter(new PontosEOnibusAdapter(pontos, getActivity()));
 
 		pontosExpandableListView.setOnChildClickListener(new OnChildClickListener() {
+
 			@Override
 			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 				Onibus onibus = pontos.get(groupPosition).getOnibuses().get(childPosition);
-
-				MapaDoOnibusFragment mapaDoOnibusFragment = (MapaDoOnibusFragment) getFragmentManager()
-						.findFragmentByTag(MapaDoOnibusFragment.class.getName());
-
+				BusaoActivity activity = ((BusaoActivity) getActivity());
+				MapaDoOnibusFragment mapaDoOnibusFragment = (MapaDoOnibusFragment) activity.getSupportFragmentManager().findFragmentByTag(MapaDoOnibusFragment.class.getName());
+				
+				Log.i("Teste teste ######################### : ", mapaDoOnibusFragment + "");
+				
 				if (mapaDoOnibusFragment == null) {
-					mapaDoOnibusFragment = new MapaDoOnibusFragment(((BusaoActivity) getActivity()));
+					mapaDoOnibusFragment = new MapaDoOnibusFragment(activity);
 				}
 				
-				//TODO ERA PRA SER UMA UNICA INSTANCIA!!
-
 				Bundle bundle = new Bundle();
 				bundle.putSerializable(Extras.ONIBUS, onibus);
 

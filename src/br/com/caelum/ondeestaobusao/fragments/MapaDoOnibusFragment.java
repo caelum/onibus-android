@@ -29,16 +29,22 @@ public class MapaDoOnibusFragment extends GPSFragment implements AsyncResultDele
 	private BusaoActivity activity;
 	private Onibus onibus;
 	private AsyncTask<Long, Void, List<Ponto>> pontosDoOnibusTask;
+	private List<Ponto> pontos;
 	
 	public MapaDoOnibusFragment(BusaoActivity activity) {
 		super(activity.getGps());
 		this.activity = activity;
 		this.mapa = new Mapa(activity);
+	}
+
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup parent) {
+		this.onibus = (Onibus) getArguments().getSerializable(Extras.ONIBUS);
 		
 		activity.getSupportActionBar().setNavigationMode(
 				ActionBar.NAVIGATION_MODE_TABS);
 		
-		BusaoNoMapaListener listener = new BusaoNoMapaListener(mapa);
+		BusaoNoMapaListener listener = new BusaoNoMapaListener(mapa, this);
 		ActionBar actionBar = activity.getSupportActionBar();
 		
 		actionBar.removeAllTabs();
@@ -54,12 +60,6 @@ public class MapaDoOnibusFragment extends GPSFragment implements AsyncResultDele
 		tempoReal.setTag(BusaoNoMapa.TEMPO_REAL);
 		tempoReal.setTabListener(listener);
 		actionBar.addTab(tempoReal);
-		
-	}
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup parent) {
-		this.onibus = (Onibus) getArguments().getSerializable(Extras.ONIBUS);
 		
 		return mapa.getMapViewContainer();
 	}
@@ -77,18 +77,23 @@ public class MapaDoOnibusFragment extends GPSFragment implements AsyncResultDele
 
 	@Override
 	public void dealWithResult(List<Ponto> pontos) {
+		this.pontos = pontos;
+		exibePontosNoMapa();
+		
+		activity.escondeProgress();
+	}
+
+	public void exibePontosNoMapa() {
 		PontoDoOnibusOverlay pontoOverlay = new PontoDoOnibusOverlay(activity);
 		
 		pontoOverlay.clear();
-		
-		for (Ponto ponto : pontos) {
-			pontoOverlay.addOverlay(ponto.toOverlayItem());
+		if (pontos != null){
+			for (Ponto ponto : pontos) {
+				pontoOverlay.addOverlay(ponto.toOverlayItem());
+			}
 		}
-		
 		mapa.adicionaCamada(pontoOverlay);
 		mapa.redesenha();
-		
-		activity.escondeProgress();
 	}
 
 	@Override
