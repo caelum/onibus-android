@@ -16,13 +16,12 @@
     <string name="vote_na_app">Se você gostou do Busão SP, por favor, nos dê o seu feedback. Obrigado!</string>
     
     <!-- carregando -->
-    <string name="carregando">Carregando…</string>
     <string name="carregando_gps">Buscando sua localização</string>
     <string name="buscando_pontos_proximos">Procurando pontos próximos</string>
     <string name="buscando_pontos_onibus">Procurando pontos do ônibus</string>
     <string name="colocando_pontos_mapa">Colocando os pontos no mapa</string>
     
-    <string name="google_maps_key">0yPhNQnSmzXhbsPCYLCmO39JduCca0atZMu5wrA</string>
+    <string name="google_maps_key">0yPhNQnSmzXj7Qe_g6aNnSEV5EFC8OtEa6K083Q</string>
     
     <!-- Content Description -->
     <string name="atualizar">Atualizar</string>

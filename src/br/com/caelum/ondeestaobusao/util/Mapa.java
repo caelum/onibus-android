@@ -1,9 +1,11 @@
-package br.com.caelum.ondeestaobusao.fragments;
+package br.com.caelum.ondeestaobusao.util;
 
 
 
+import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import br.com.caelum.ondeestaobusao.activity.BusaoActivity;
+import br.com.caelum.ondeestaobusao.activity.R;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
 
 import com.google.android.maps.MapView;
@@ -14,11 +16,13 @@ public class Mapa {
 	private ViewGroup mapViewContainer;
 	private MapView mapa;
 	private final BusaoActivity activity;
+	private MyLocationOverlay myLocationOverlay;
 	
 	public Mapa(BusaoActivity activity) {
 		this.activity = activity;
-		mapViewContainer = activity.getMapViewContainer();
-		mapa = activity.getMapView();
+
+		mapViewContainer = (ViewGroup) LayoutInflater.from(activity).inflate(R.layout.mapa, null);
+		mapa = (MapView) mapViewContainer.findViewById(R.id.map_view);
 		
 		mapa.displayZoomControls(true);
 		mapa.setBuiltInZoomControls(true);
@@ -27,10 +31,16 @@ public class Mapa {
 	}
 	
 	public void habilitaBussula() {
-		MyLocationOverlay myLocationOverlay = new MyLocationOverlay(activity, mapa);
+		myLocationOverlay = new MyLocationOverlay(activity, mapa);
 		myLocationOverlay.enableCompass();
 		myLocationOverlay.enableMyLocation();
 		mapa.getOverlays().add(myLocationOverlay);
+	}
+	
+	public void desabilitaBussula() {
+		if (myLocationOverlay != null) {
+			myLocationOverlay.disableMyLocation();
+		}
 	}
 	
 	public void adicionaCamada(Overlay overlay) {

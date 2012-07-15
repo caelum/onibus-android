@@ -2,49 +2,61 @@ package br.com.caelum.ondeestaobusao.fragments;
 
 import java.util.List;
 
-import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import br.com.caelum.ondeestaobusao.activity.BusaoActivity;
 import br.com.caelum.ondeestaobusao.activity.R;
+import br.com.caelum.ondeestaobusao.activity.application.BusaoApplication;
 import br.com.caelum.ondeestaobusao.constants.Extras;
 import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
+import br.com.caelum.ondeestaobusao.gps.LocationObserver;
 import br.com.caelum.ondeestaobusao.map.PontoDoOnibusOverlay;
+import br.com.caelum.ondeestaobusao.map.VeiculosOverlay;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
 import br.com.caelum.ondeestaobusao.model.Onibus;
 import br.com.caelum.ondeestaobusao.model.Ponto;
+import br.com.caelum.ondeestaobusao.model.Veiculo;
 import br.com.caelum.ondeestaobusao.task.PontosDoOnibusTask;
+import br.com.caelum.ondeestaobusao.task.VeiculoEmTempoRealTask;
+import br.com.caelum.ondeestaobusao.util.Mapa;
 import br.com.caelum.ondeestaobusao.widgets.actionbar.BusaoNoMapa;
 import br.com.caelum.ondeestaobusao.widgets.actionbar.BusaoNoMapaListener;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
+import com.actionbarsherlock.app.SherlockFragment;
 
-@SuppressLint("ValidFragment")
-public class MapaDoOnibusFragment extends GPSFragment implements AsyncResultDelegate<List<Ponto>> {
-	private Mapa mapa;
-	private BusaoActivity activity;
+public class MapaDoOnibusFragment extends SherlockFragment implements AsyncResultDelegate<List<Ponto>>, LocationObserver {
 	private Onibus onibus;
 	private AsyncTask<Long, Void, List<Ponto>> pontosDoOnibusTask;
 	private List<Ponto> pontos;
+	private Mapa mapa;
+	private BusaoActivity activity;
+	private PontoDoOnibusOverlay pontoOverlay;
+	private List<Veiculo> veiculos;
+	private VeiculosOverlay veiculosOverlay;
 	
-	public MapaDoOnibusFragment(BusaoActivity activity) {
-		super(activity.getGps());
-		this.activity = activity;
-		this.mapa = new Mapa(activity);
-	}
-
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup parent) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle bundle) {
 		this.onibus = (Onibus) getArguments().getSerializable(Extras.ONIBUS);
 		
+		getSherlockActivity().getSupportActionBar().setTitle(onibus.getLetreiro());
+		getSherlockActivity().getSupportActionBar().setSubtitle(onibus.getSentido().toString());
+		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+		
+		activity = (BusaoActivity) getActivity();
 		activity.getSupportActionBar().setNavigationMode(
 				ActionBar.NAVIGATION_MODE_TABS);
 		
-		BusaoNoMapaListener listener = new BusaoNoMapaListener(mapa, this);
+		BusaoApplication application = (BusaoApplication) getSherlockActivity().getApplication();
+		mapa = application.getMapa();
+
+		BusaoNoMapaListener listener = new BusaoNoMapaListener(this);
 		ActionBar actionBar = activity.getSupportActionBar();
 		
 		actionBar.removeAllTabs();
@@ -61,6 +73,8 @@ public class MapaDoOnibusFragment extends GPSFragment implements AsyncResultDele
 		tempoReal.setTabListener(listener);
 		actionBar.addTab(tempoReal);
 		
+		application.getLocation().registerObserver(this);
+
 		return mapa.getMapViewContainer();
 	}
 
@@ -70,21 +84,24 @@ public class MapaDoOnibusFragment extends GPSFragment implements AsyncResultDele
 		mapa.centralizaNa(coordenada);
 		mapa.habilitaBussula();
 
-		activity.exibeProgress();
-		activity.atualizaTextoDoProgress(R.string.buscando_pontos_onibus);
+		BusaoApplication application = (BusaoApplication) activity.getApplication();
+		application.getProgressBar().showWithText(R.string.buscando_pontos_proximos);
 		pontosDoOnibusTask = new PontosDoOnibusTask(this).execute(onibus.getId());
+		new VeiculoEmTempoRealTask(assync).execute(onibus.getCodigoGPS());
+		Log.i("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%", onibus.getCodigoGPS()+ "");
 	}
 
 	@Override
 	public void dealWithResult(List<Ponto> pontos) {
 		this.pontos = pontos;
 		exibePontosNoMapa();
-		
-		activity.escondeProgress();
 	}
 
 	public void exibePontosNoMapa() {
-		PontoDoOnibusOverlay pontoOverlay = new PontoDoOnibusOverlay(activity);
+		pontoOverlay = new PontoDoOnibusOverlay(activity);
+		
+		BusaoApplication application = (BusaoApplication) activity.getApplication();
+		mapa = application.getMapa();
 		
 		pontoOverlay.clear();
 		if (pontos != null){
@@ -94,17 +111,42 @@ public class MapaDoOnibusFragment extends GPSFragment implements AsyncResultDele
 		}
 		mapa.adicionaCamada(pontoOverlay);
 		mapa.redesenha();
+		
+		application.getProgressBar().showWithText(R.string.colocando_pontos_mapa);
+		application.getProgressBar().hide();
+	}
+
+	public void exibeVeiculosNoMapa() {
+		veiculosOverlay = new VeiculosOverlay(activity);
+		
+		BusaoApplication application = (BusaoApplication) activity.getApplication();
+		mapa = application.getMapa();
+		
+		veiculosOverlay.clear();
+		if (veiculos != null){
+			for (Veiculo veiculo : veiculos) {
+				veiculosOverlay.addOverlay(veiculo.toOverlayItem());
+			}
+		}
+		mapa.adicionaCamada(veiculosOverlay);
+		mapa.redesenha();
+		
+		application.getProgressBar().showWithText(R.string.colocando_pontos_mapa);
+		application.getProgressBar().hide();
 	}
 
 	@Override
 	public void dealWithError() {
-		activity.dealWithError();
+		//TODO TRATAR ERRO AQUI
 	}
 
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
-
+		
+		mapa.desabilitaBussula();
+		BusaoApplication application = (BusaoApplication) activity.getApplication();
+		application.getProgressBar().hide();
 		if (pontosDoOnibusTask != null && Status.RUNNING.equals(pontosDoOnibusTask.getStatus())) {
 			pontosDoOnibusTask.cancel(true);
 		}
@@ -116,12 +158,21 @@ public class MapaDoOnibusFragment extends GPSFragment implements AsyncResultDele
 
 		mapa.removeDaTela();
 	}
+	
+	private AsyncResultDelegate<List<Veiculo>> assync = new AsyncResultDelegate<List<Veiculo>>() {
 
-	@Override
-	public void updateHeader(View view) {
-		getSherlockActivity().getSupportActionBar().setTitle(onibus.getLetreiro());
-		getSherlockActivity().getSupportActionBar().setSubtitle(onibus.getSentido().toString());
-		getSherlockActivity().getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-	}
 
+		@Override
+		public void dealWithResult(List<Veiculo> veiculos) {
+			MapaDoOnibusFragment.this.veiculos = veiculos;
+			exibeVeiculosNoMapa();
+		}
+
+		@Override
+		public void dealWithError() {
+			//TODO COLOCAR TRATAMENTO DE ERRO AQUI
+		}
+		
+	};
+	
 }

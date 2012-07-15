@@ -9,12 +9,12 @@ import br.com.caelum.ondeestaobusao.activity.R;
 import com.google.android.maps.ItemizedOverlay;
 import com.google.android.maps.OverlayItem;
 
-public class PontoDoOnibusOverlay extends ItemizedOverlay<OverlayItem> {
+public class VeiculosOverlay extends ItemizedOverlay<OverlayItem> {
 
 	private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
 	private Context mContext;
 
-	public PontoDoOnibusOverlay(Context context) {
+	public VeiculosOverlay(Context context) {
 		super(boundCenterBottom(context.getResources().getDrawable(R.drawable.ic_bus_stop)));
 		mContext = context;
 		populate();

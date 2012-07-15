@@ -1,8 +1,9 @@
 package br.com.caelum.ondeestaobusao.widgets.actionbar;
 
 import android.support.v4.app.FragmentTransaction;
-import br.com.caelum.ondeestaobusao.fragments.Mapa;
+import br.com.caelum.ondeestaobusao.activity.application.BusaoApplication;
 import br.com.caelum.ondeestaobusao.fragments.MapaDoOnibusFragment;
+import br.com.caelum.ondeestaobusao.util.Mapa;
 
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.ActionBar.TabListener;
@@ -11,9 +12,10 @@ public class BusaoNoMapaListener implements TabListener {
 	private final Mapa mapa;
 	private final MapaDoOnibusFragment fragment;
 
-	public BusaoNoMapaListener(Mapa mapa, MapaDoOnibusFragment fragment) {
-		this.mapa = mapa;
+	public BusaoNoMapaListener(MapaDoOnibusFragment fragment) {
+		BusaoApplication application = (BusaoApplication) fragment.getSherlockActivity().getApplication();
 		this.fragment = fragment;
+		this.mapa = application.getMapa();
 	}
 	
 	@Override
@@ -21,6 +23,8 @@ public class BusaoNoMapaListener implements TabListener {
 		mapa.limpa();
 		if (tab.getTag().equals(BusaoNoMapa.ITINERARIO)) {
 			fragment.exibePontosNoMapa();
+		} else {
+			fragment.exibeVeiculosNoMapa();
 		}
 		mapa.redesenha();
 	}
