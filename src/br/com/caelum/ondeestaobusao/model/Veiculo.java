@@ -21,6 +21,6 @@ public class Veiculo {
 	
 	public OverlayItem toOverlayItem() {
 		return new OverlayItem(
-				getLocalizacao().toGeoPoint(), "Localização do ponto:", "");
+				getLocalizacao().toGeoPoint(), "Localização do ônibus:", "");
 	}
 }
