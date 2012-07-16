@@ -15,7 +15,7 @@ public class VeiculosOverlay extends ItemizedOverlay<OverlayItem> {
 	private Context mContext;
 
 	public VeiculosOverlay(Context context) {
-		super(boundCenterBottom(context.getResources().getDrawable(R.drawable.ic_bus_stop)));
+		super(boundCenterBottom(context.getResources().getDrawable(R.drawable.ic_bus_real_time)));
 		mContext = context;
 		populate();
 	}

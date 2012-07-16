@@ -23,6 +23,7 @@ import br.com.caelum.ondeestaobusao.model.Ponto;
 import br.com.caelum.ondeestaobusao.model.Veiculo;
 import br.com.caelum.ondeestaobusao.task.PontosDoOnibusTask;
 import br.com.caelum.ondeestaobusao.task.VeiculoEmTempoRealTask;
+import br.com.caelum.ondeestaobusao.util.GeoCoderUtil;
 import br.com.caelum.ondeestaobusao.util.Mapa;
 import br.com.caelum.ondeestaobusao.widgets.actionbar.BusaoNoMapa;
 import br.com.caelum.ondeestaobusao.widgets.actionbar.BusaoNoMapaListener;
@@ -40,6 +41,7 @@ public class MapaDoOnibusFragment extends SherlockFragment implements AsyncResul
 	private PontoDoOnibusOverlay pontoOverlay;
 	private List<Veiculo> veiculos;
 	private VeiculosOverlay veiculosOverlay;
+	private GeoCoderUtil geoCoderUtil;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle bundle) {
@@ -117,6 +119,7 @@ public class MapaDoOnibusFragment extends SherlockFragment implements AsyncResul
 	}
 
 	public void exibeVeiculosNoMapa() {
+		geoCoderUtil = new GeoCoderUtil(activity);
 		veiculosOverlay = new VeiculosOverlay(activity);
 		
 		BusaoApplication application = (BusaoApplication) activity.getApplication();
@@ -125,7 +128,7 @@ public class MapaDoOnibusFragment extends SherlockFragment implements AsyncResul
 		veiculosOverlay.clear();
 		if (veiculos != null){
 			for (Veiculo veiculo : veiculos) {
-				veiculosOverlay.addOverlay(veiculo.toOverlayItem());
+				veiculosOverlay.addOverlay(veiculo.toOverlayItem(geoCoderUtil.getEndereco(veiculo.getLocalizacao().toGeoPoint())));
 			}
 		}
 		mapa.adicionaCamada(veiculosOverlay);

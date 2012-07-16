@@ -26,8 +26,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+	    <service android:name=".service.LocationService" />
 
         <uses-library android:name="com.google.android.maps" />
     </application>
+    
 
 </manifest>

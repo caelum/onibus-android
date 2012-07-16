@@ -19,8 +19,8 @@ public class Veiculo {
 		this.para_deficiente = para_deficiente;
 	}
 	
-	public OverlayItem toOverlayItem() {
+	public OverlayItem toOverlayItem(String endereco) {
 		return new OverlayItem(
-				getLocalizacao().toGeoPoint(), "Localização do ônibus:", "");
+				getLocalizacao().toGeoPoint(), "Localização do ônibus:", endereco);
 	}
 }
