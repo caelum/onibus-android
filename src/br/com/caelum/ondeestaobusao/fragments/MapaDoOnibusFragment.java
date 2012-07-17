@@ -8,7 +8,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +46,9 @@ public class MapaDoOnibusFragment extends SherlockFragment implements AsyncResul
 	private VeiculosOverlay veiculosOverlay;
 	private GeoCoderUtil geoCoderUtil;
 	private AsyncTask<Integer, Void, List<Veiculo>> veiculosTask;
-	private AlertDialog dialog;
+	private AlertDialog.Builder dialog;
+	private ActionBar actionBar;
+	private BusaoApplication application;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle bundle) {
@@ -61,11 +62,11 @@ public class MapaDoOnibusFragment extends SherlockFragment implements AsyncResul
 		activity.getSupportActionBar().setNavigationMode(
 				ActionBar.NAVIGATION_MODE_TABS);
 		
-		BusaoApplication application = (BusaoApplication) getSherlockActivity().getApplication();
+		application = (BusaoApplication) activity.getApplication();
 		mapa = application.getMapa();
 
 		BusaoNoMapaListener listener = new BusaoNoMapaListener(this);
-		ActionBar actionBar = activity.getSupportActionBar();
+		actionBar = activity.getSupportActionBar();
 		
 		actionBar.removeAllTabs();
 		
@@ -92,11 +93,9 @@ public class MapaDoOnibusFragment extends SherlockFragment implements AsyncResul
 		mapa.centralizaNa(coordenada);
 		mapa.habilitaBussula();
 
-		BusaoApplication application = (BusaoApplication) activity.getApplication();
 		application.getProgressBar().showWithText(R.string.buscando_pontos_proximos);
 		pontosDoOnibusTask = new PontosDoOnibusTask(this).execute(onibus.getId());
 		veiculosTask = new VeiculoEmTempoRealTask(assync).execute(onibus.getCodigoGPS());
-		Log.i("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%", onibus.getCodigoGPS()+ "");
 	}
 
 	@Override
@@ -106,49 +105,62 @@ public class MapaDoOnibusFragment extends SherlockFragment implements AsyncResul
 	}
 
 	public void exibePontosNoMapa() {
-		pontoOverlay = new PontoDoOnibusOverlay(activity);
-		
-		BusaoApplication application = (BusaoApplication) activity.getApplication();
-		mapa = application.getMapa();
-		
-		pontoOverlay.clear();
-		if (pontos != null){
-			for (Ponto ponto : pontos) {
-				pontoOverlay.addOverlay(ponto.toOverlayItem());
-			}
+		if (pontosDoOnibusTask != null && pontosDoOnibusTask.getStatus().equals(Status.RUNNING)) {
+			application.getProgressBar().showWithText(R.string.colocando_pontos_mapa);
 		}
-		mapa.adicionaCamada(pontoOverlay);
-		mapa.redesenha();
 		
-		application.getProgressBar().showWithText(R.string.colocando_pontos_mapa);
-		application.getProgressBar().hide();
+		if (verifyActionBar(BusaoNoMapa.ITINERARIO)) {
+			pontoOverlay = new PontoDoOnibusOverlay(activity);
+			
+			mapa = application.getMapa();
+			
+			pontoOverlay.clear();
+			if (pontos != null){
+				for (Ponto ponto : pontos) {
+					pontoOverlay.addOverlay(ponto.toOverlayItem());
+				}
+			}
+			mapa.adicionaCamada(pontoOverlay);
+			mapa.redesenha();
+			
+			application.getProgressBar().hide();
+		}
 	}
 
 	public void exibeVeiculosNoMapa() {
-		geoCoderUtil = new GeoCoderUtil(activity);
-		veiculosOverlay = new VeiculosOverlay(activity);
-		
-		BusaoApplication application = (BusaoApplication) activity.getApplication();
-		mapa = application.getMapa();
-		
-		veiculosOverlay.clear();
-		if (veiculos != null){
-			for (Veiculo veiculo : veiculos) {
-				veiculosOverlay.addOverlay(veiculo.toOverlayItem(geoCoderUtil.getEndereco(veiculo.getLocalizacao().toGeoPoint())));
-			}
+		if (veiculosTask !=  null && veiculosTask.getStatus().equals(Status.RUNNING)) {
+			application.getProgressBar().showWithText(R.string.colocando_veiculos_mapa);
 		}
-		mapa.adicionaCamada(veiculosOverlay);
-		mapa.redesenha();
 		
-		application.getProgressBar().showWithText(R.string.colocando_pontos_mapa);
-		application.getProgressBar().hide();
+		if (verifyActionBar(BusaoNoMapa.TEMPO_REAL)) {
+			geoCoderUtil = new GeoCoderUtil(activity);
+			veiculosOverlay = new VeiculosOverlay(activity);
+			
+			mapa = application.getMapa();
+			
+			veiculosOverlay.clear();
+			if (veiculos != null){
+				for (Veiculo veiculo : veiculos) {
+					veiculosOverlay.addOverlay(veiculo.toOverlayItem(geoCoderUtil.getEndereco(veiculo.getLocalizacao().toGeoPoint())));
+				}
+			}
+			mapa.adicionaCamada(veiculosOverlay);
+			mapa.redesenha();
+			
+			application.getProgressBar().hide();
+		}
+	}
+
+
+	private boolean verifyActionBar(BusaoNoMapa busaoNoMapa) {
+		return actionBar != null && actionBar.getSelectedTab() != null && busaoNoMapa.equals(actionBar.getSelectedTab().getTag());
 	}
 	
 	public void error() {
 		if (dialog == null) {
 			cancelAssyncTasks();
 			dialog = AlertDialogBuilder.builder(activity);
-			dialog.setButton(AlertDialog.BUTTON_POSITIVE, activity.getResources().getString(R.string.tente_novamente), new OnClickListener() {
+			dialog.setPositiveButton(activity.getResources().getString(R.string.tente_novamente), new OnClickListener() {
 	
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -159,7 +171,7 @@ public class MapaDoOnibusFragment extends SherlockFragment implements AsyncResul
 				}
 	
 			});
-			dialog.setButton(AlertDialog.BUTTON_NEGATIVE, activity.getResources().getString(R.string.cancelar), new OnClickListener() {
+			dialog.setNegativeButton(activity.getResources().getString(R.string.cancelar), new OnClickListener() {
 	
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
@@ -182,9 +194,12 @@ public class MapaDoOnibusFragment extends SherlockFragment implements AsyncResul
 		super.onDestroyView();
 		
 		mapa.desabilitaBussula();
-		BusaoApplication application = (BusaoApplication) activity.getApplication();
+		application = (BusaoApplication) activity.getApplication();
 		application.getProgressBar().hide();
+		application.getLocation().unRegisterObserver(this);
 		cancelAssyncTasks();
+		
+		
 
 		getSherlockActivity().getSupportActionBar().setNavigationMode(
 				ActionBar.NAVIGATION_MODE_STANDARD);

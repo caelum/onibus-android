@@ -27,8 +27,8 @@ public class Localizacao {
 	}
 
 	public GeoPoint toGeoPoint() {
-		Double geoLat = this.longitude*CONVERSION_SCALE;
-		Double geoLng = this.latitude*CONVERSION_SCALE;
+		Double geoLat = this.latitude*CONVERSION_SCALE;
+		Double geoLng = this.longitude*CONVERSION_SCALE;
 		return new GeoPoint(geoLat.intValue(), geoLng.intValue());
 	}
 }

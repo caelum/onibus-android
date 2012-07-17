@@ -37,6 +37,8 @@ public class PontosProximosFragment extends SherlockFragment implements AsyncRes
 	private List<Ponto> pontos;
 	private AsyncTask<Coordenada, Void, List<Ponto>> pontosEOnibusTask;
 	private Coordenada coordenada;
+	private BusaoActivity activity;
+	private BusaoApplication application;
 
 	public PontosProximosFragment() {
 		super();
@@ -50,7 +52,8 @@ public class PontosProximosFragment extends SherlockFragment implements AsyncRes
 			pontosExpandableListView = (PontoExpandableListView) inflater.inflate(R.layout.pontos_e_onibuses, parent,
 					false);
 			hide();
-			BusaoApplication application = (BusaoApplication) getActivity().getApplication();
+			activity = (BusaoActivity) getActivity();
+			application = (BusaoApplication) activity.getApplication();
 			application.getLocation().registerObserver(this);
 		}
 		return pontosExpandableListView;
@@ -62,11 +65,12 @@ public class PontosProximosFragment extends SherlockFragment implements AsyncRes
 	}
 
 	public void callback(Coordenada coordenada) {
+		hide();
+		application.getProgressBar().showWithText(R.string.buscando_pontos_proximos);
+
 		this.coordenada = coordenada;
 		pontosEOnibusTask = new PontosEOnibusTask(this).execute(coordenada);
 		
-		BusaoApplication application = (BusaoApplication) getActivity().getApplication();
-		application.getProgressBar().changedText(R.string.buscando_pontos_proximos);
 	}
 
 	@Override
@@ -98,15 +102,14 @@ public class PontosProximosFragment extends SherlockFragment implements AsyncRes
 			}
 		});
 		pontosExpandableListView.setVisibility(View.VISIBLE);
-		BusaoApplication application = (BusaoApplication) getActivity().getApplication();
 		application.getProgressBar().hide();		
 	}
 
 	@Override
 	public void dealWithError() {
 		final Activity activity = getActivity();
-		AlertDialog dialog = AlertDialogBuilder.builder(activity);
-		dialog.setButton(AlertDialog.BUTTON_POSITIVE, activity.getResources().getString(R.string.tente_novamente), new OnClickListener() {
+		AlertDialog.Builder dialog = AlertDialogBuilder.builder(activity);
+		dialog.setPositiveButton(activity.getResources().getString(R.string.tente_novamente), new OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -115,7 +118,7 @@ public class PontosProximosFragment extends SherlockFragment implements AsyncRes
 			}
 
 		});
-		dialog.setButton(AlertDialog.BUTTON_NEGATIVE, activity.getResources().getString(R.string.cancelar), new OnClickListener() {
+		dialog.setNegativeButton(activity.getResources().getString(R.string.cancelar), new OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {

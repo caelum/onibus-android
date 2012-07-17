@@ -20,6 +20,7 @@
     <string name="buscando_pontos_proximos">Procurando pontos próximos</string>
     <string name="buscando_pontos_onibus">Procurando pontos do ônibus</string>
     <string name="colocando_pontos_mapa">Colocando os pontos no mapa</string>
+    <string name="colocando_veiculos_mapa">Colocando os veículos no mapa</string>
     
     <string name="google_maps_key">0yPhNQnSmzXhbsPCYLCmO39JduCca0atZMu5wrA</string>
     

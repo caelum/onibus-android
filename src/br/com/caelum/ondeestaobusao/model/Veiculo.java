@@ -4,7 +4,7 @@ import com.google.android.maps.OverlayItem;
 
 public class Veiculo {
 	private Localizacao localizacao;
-	private boolean para_deficiente;
+	private boolean deficientes;
 	
 	public Localizacao getLocalizacao() {
 		return localizacao;
@@ -12,11 +12,11 @@ public class Veiculo {
 	public void setLocalizacao(Localizacao localizacao) {
 		this.localizacao = localizacao;
 	}
-	public boolean isPara_deficiente() {
-		return para_deficiente;
+	public boolean isDeficientes() {
+		return deficientes;
 	}
-	public void setPara_deficiente(boolean para_deficiente) {
-		this.para_deficiente = para_deficiente;
+	public void setDeficientes(boolean para_deficiente) {
+		this.deficientes = para_deficiente;
 	}
 	
 	public OverlayItem toOverlayItem(String endereco) {
