@@ -2,6 +2,10 @@ package br.com.caelum.ondeestaobusao.fragments;
 
 import java.util.List;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
@@ -21,6 +25,7 @@ import br.com.caelum.ondeestaobusao.model.Coordenada;
 import br.com.caelum.ondeestaobusao.model.Onibus;
 import br.com.caelum.ondeestaobusao.model.Ponto;
 import br.com.caelum.ondeestaobusao.task.PontosEOnibusTask;
+import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
 import br.com.caelum.ondeestaobusao.widget.PontoExpandableListView;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -31,6 +36,7 @@ public class PontosProximosFragment extends SherlockFragment implements AsyncRes
 	private PontoExpandableListView pontosExpandableListView;
 	private List<Ponto> pontos;
 	private AsyncTask<Coordenada, Void, List<Ponto>> pontosEOnibusTask;
+	private Coordenada coordenada;
 
 	public PontosProximosFragment() {
 		super();
@@ -56,6 +62,7 @@ public class PontosProximosFragment extends SherlockFragment implements AsyncRes
 	}
 
 	public void callback(Coordenada coordenada) {
+		this.coordenada = coordenada;
 		pontosEOnibusTask = new PontosEOnibusTask(this).execute(coordenada);
 		
 		BusaoApplication application = (BusaoApplication) getActivity().getApplication();
@@ -97,7 +104,27 @@ public class PontosProximosFragment extends SherlockFragment implements AsyncRes
 
 	@Override
 	public void dealWithError() {
-		//TODO TRATAR O ERRO AQUI
+		final Activity activity = getActivity();
+		AlertDialog dialog = AlertDialogBuilder.builder(activity);
+		dialog.setButton(AlertDialog.BUTTON_POSITIVE, activity.getResources().getString(R.string.tente_novamente), new OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+				pontosEOnibusTask = new PontosEOnibusTask(PontosProximosFragment.this).execute(coordenada);
+			}
+
+		});
+		dialog.setButton(AlertDialog.BUTTON_NEGATIVE, activity.getResources().getString(R.string.cancelar), new OnClickListener() {
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+				activity.onBackPressed();
+			}
+
+		});
+		dialog.show();
 	}
 
 	@Override

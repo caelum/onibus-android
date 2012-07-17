@@ -2,6 +2,9 @@ package br.com.caelum.ondeestaobusao.fragments;
 
 import java.util.List;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
 import android.os.Bundle;
@@ -23,6 +26,7 @@ import br.com.caelum.ondeestaobusao.model.Ponto;
 import br.com.caelum.ondeestaobusao.model.Veiculo;
 import br.com.caelum.ondeestaobusao.task.PontosDoOnibusTask;
 import br.com.caelum.ondeestaobusao.task.VeiculoEmTempoRealTask;
+import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
 import br.com.caelum.ondeestaobusao.util.GeoCoderUtil;
 import br.com.caelum.ondeestaobusao.util.Mapa;
 import br.com.caelum.ondeestaobusao.widgets.actionbar.BusaoNoMapa;
@@ -42,6 +46,8 @@ public class MapaDoOnibusFragment extends SherlockFragment implements AsyncResul
 	private List<Veiculo> veiculos;
 	private VeiculosOverlay veiculosOverlay;
 	private GeoCoderUtil geoCoderUtil;
+	private AsyncTask<Integer, Void, List<Veiculo>> veiculosTask;
+	private AlertDialog dialog;
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle bundle) {
@@ -89,7 +95,7 @@ public class MapaDoOnibusFragment extends SherlockFragment implements AsyncResul
 		BusaoApplication application = (BusaoApplication) activity.getApplication();
 		application.getProgressBar().showWithText(R.string.buscando_pontos_proximos);
 		pontosDoOnibusTask = new PontosDoOnibusTask(this).execute(onibus.getId());
-		new VeiculoEmTempoRealTask(assync).execute(onibus.getCodigoGPS());
+		veiculosTask = new VeiculoEmTempoRealTask(assync).execute(onibus.getCodigoGPS());
 		Log.i("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%", onibus.getCodigoGPS()+ "");
 	}
 
@@ -137,10 +143,38 @@ public class MapaDoOnibusFragment extends SherlockFragment implements AsyncResul
 		application.getProgressBar().showWithText(R.string.colocando_pontos_mapa);
 		application.getProgressBar().hide();
 	}
+	
+	public void error() {
+		if (dialog == null) {
+			cancelAssyncTasks();
+			dialog = AlertDialogBuilder.builder(activity);
+			dialog.setButton(AlertDialog.BUTTON_POSITIVE, activity.getResources().getString(R.string.tente_novamente), new OnClickListener() {
+	
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					MapaDoOnibusFragment.this.dialog = null;
+					pontosDoOnibusTask = new PontosDoOnibusTask(MapaDoOnibusFragment.this).execute(onibus.getId());
+					veiculosTask = new VeiculoEmTempoRealTask(assync).execute(onibus.getCodigoGPS());
+				}
+	
+			});
+			dialog.setButton(AlertDialog.BUTTON_NEGATIVE, activity.getResources().getString(R.string.cancelar), new OnClickListener() {
+	
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					activity.onBackPressed();
+				}
+	
+			});
+			dialog.show();
+		}
+	}
 
 	@Override
 	public void dealWithError() {
-		//TODO TRATAR ERRO AQUI
+		this.error();
 	}
 
 	@Override
@@ -150,9 +184,7 @@ public class MapaDoOnibusFragment extends SherlockFragment implements AsyncResul
 		mapa.desabilitaBussula();
 		BusaoApplication application = (BusaoApplication) activity.getApplication();
 		application.getProgressBar().hide();
-		if (pontosDoOnibusTask != null && Status.RUNNING.equals(pontosDoOnibusTask.getStatus())) {
-			pontosDoOnibusTask.cancel(true);
-		}
+		cancelAssyncTasks();
 
 		getSherlockActivity().getSupportActionBar().setNavigationMode(
 				ActionBar.NAVIGATION_MODE_STANDARD);
@@ -160,6 +192,17 @@ public class MapaDoOnibusFragment extends SherlockFragment implements AsyncResul
 		mapa.limpa();
 
 		mapa.removeDaTela();
+	}
+
+
+	private void cancelAssyncTasks() {
+		if (pontosDoOnibusTask != null && Status.RUNNING.equals(pontosDoOnibusTask.getStatus())) {
+			pontosDoOnibusTask.cancel(true);
+		}
+		
+		if (veiculosTask != null && Status.RUNNING.equals(veiculosTask.getStatus())) {
+			veiculosTask.cancel(true);
+		}
 	}
 	
 	private AsyncResultDelegate<List<Veiculo>> assync = new AsyncResultDelegate<List<Veiculo>>() {
@@ -173,9 +216,8 @@ public class MapaDoOnibusFragment extends SherlockFragment implements AsyncResul
 
 		@Override
 		public void dealWithError() {
-			//TODO COLOCAR TRATAMENTO DE ERRO AQUI
+			MapaDoOnibusFragment.this.error();
 		}
-		
 	};
 	
 }

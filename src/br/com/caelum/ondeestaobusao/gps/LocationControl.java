@@ -17,7 +17,7 @@ public class LocationControl {
 				observer.callback(atual);
 			}
 		} else {
-			//TODO TRATAR O ERRO AQUI
+			
 		}
 	}
 

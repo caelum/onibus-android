@@ -26,4 +26,7 @@
     <!-- Content Description -->
     <string name="atualizar">Atualizar</string>
     
+    <string name="tente_novamente">Tentar Novamente</string>
+    <string name="cancelar">cancelar</string>
+    
 </resources>
