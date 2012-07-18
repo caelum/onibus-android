@@ -7,7 +7,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.AsyncTask;
-import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +25,7 @@ import br.com.caelum.ondeestaobusao.model.Onibus;
 import br.com.caelum.ondeestaobusao.model.Ponto;
 import br.com.caelum.ondeestaobusao.task.PontosEOnibusTask;
 import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
+import br.com.caelum.ondeestaobusao.util.CancelableAssynTask;
 import br.com.caelum.ondeestaobusao.widget.PontoExpandableListView;
 
 import com.actionbarsherlock.app.SherlockFragment;
@@ -83,13 +83,8 @@ public class PontosProximosFragment extends SherlockFragment implements AsyncRes
 			@Override
 			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 				Onibus onibus = pontos.get(groupPosition).getOnibuses().get(childPosition);
-				BusaoActivity activity = ((BusaoActivity) getActivity());
 				
-				MapaDoOnibusFragment mapaDoOnibusFragment = (MapaDoOnibusFragment) activity.getSupportFragmentManager().findFragmentByTag("mapaDoOnibusFragment");
-				
-				if (mapaDoOnibusFragment == null) {
-					mapaDoOnibusFragment = new MapaDoOnibusFragment();
-				}
+				MapaDoOnibusFragment mapaDoOnibusFragment = new MapaDoOnibusFragment();
 				
 				Bundle bundle = new Bundle();
 				bundle.putSerializable(Extras.ONIBUS, onibus);
@@ -135,14 +130,14 @@ public class PontosProximosFragment extends SherlockFragment implements AsyncRes
 		super.onDestroyView();
 		super.onDestroyOptionsMenu();
 		
-		if (pontosEOnibusTask != null && Status.RUNNING.equals(pontosEOnibusTask.getStatus())) {
-			pontosEOnibusTask.cancel(true);
-		}
+		CancelableAssynTask.cancel(pontosEOnibusTask);
 		
 		ViewGroup parent = (ViewGroup) pontosExpandableListView.getParent();
 		if (parent != null) {
 			parent.removeView(pontosExpandableListView);
 		}
+		
+		application.getLocation().unRegisterObserver(this);
 	}
 
 	public List<Ponto> getPontos() {

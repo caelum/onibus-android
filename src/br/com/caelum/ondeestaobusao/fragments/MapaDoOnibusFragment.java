@@ -26,6 +26,7 @@ import br.com.caelum.ondeestaobusao.model.Veiculo;
 import br.com.caelum.ondeestaobusao.task.PontosDoOnibusTask;
 import br.com.caelum.ondeestaobusao.task.VeiculoEmTempoRealTask;
 import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
+import br.com.caelum.ondeestaobusao.util.CancelableAssynTask;
 import br.com.caelum.ondeestaobusao.util.GeoCoderUtil;
 import br.com.caelum.ondeestaobusao.util.Mapa;
 import br.com.caelum.ondeestaobusao.widgets.actionbar.BusaoNoMapa;
@@ -91,7 +92,6 @@ public class MapaDoOnibusFragment extends SherlockFragment implements AsyncResul
 	@Override
 	public void callback(Coordenada coordenada) {
 		mapa.centralizaNa(coordenada);
-		mapa.habilitaBussula();
 
 		application.getProgressBar().showWithText(R.string.buscando_pontos_proximos);
 		pontosDoOnibusTask = new PontosDoOnibusTask(this).execute(onibus.getId());
@@ -105,11 +105,12 @@ public class MapaDoOnibusFragment extends SherlockFragment implements AsyncResul
 	}
 
 	public void exibePontosNoMapa() {
-		if (pontosDoOnibusTask != null && pontosDoOnibusTask.getStatus().equals(Status.RUNNING)) {
+		boolean actionBar = verifyActionBar(BusaoNoMapa.ITINERARIO);
+		if (pontosDoOnibusTask != null && pontosDoOnibusTask.getStatus().equals(Status.RUNNING) && actionBar) {
 			application.getProgressBar().showWithText(R.string.colocando_pontos_mapa);
 		}
 		
-		if (verifyActionBar(BusaoNoMapa.ITINERARIO)) {
+		if (actionBar) {
 			pontoOverlay = new PontoDoOnibusOverlay(activity);
 			
 			mapa = application.getMapa();
@@ -128,11 +129,13 @@ public class MapaDoOnibusFragment extends SherlockFragment implements AsyncResul
 	}
 
 	public void exibeVeiculosNoMapa() {
-		if (veiculosTask !=  null && veiculosTask.getStatus().equals(Status.RUNNING)) {
+		boolean actionBar = verifyActionBar(BusaoNoMapa.TEMPO_REAL);
+		
+		if (veiculosTask !=  null && veiculosTask.getStatus().equals(Status.RUNNING) && actionBar) {
 			application.getProgressBar().showWithText(R.string.colocando_veiculos_mapa);
 		}
 		
-		if (verifyActionBar(BusaoNoMapa.TEMPO_REAL)) {
+		if (actionBar) {
 			geoCoderUtil = new GeoCoderUtil(activity);
 			veiculosOverlay = new VeiculosOverlay(activity);
 			
@@ -197,10 +200,9 @@ public class MapaDoOnibusFragment extends SherlockFragment implements AsyncResul
 		application = (BusaoApplication) activity.getApplication();
 		application.getProgressBar().hide();
 		application.getLocation().unRegisterObserver(this);
+		
 		cancelAssyncTasks();
 		
-		
-
 		getSherlockActivity().getSupportActionBar().setNavigationMode(
 				ActionBar.NAVIGATION_MODE_STANDARD);
 		
@@ -211,13 +213,8 @@ public class MapaDoOnibusFragment extends SherlockFragment implements AsyncResul
 
 
 	private void cancelAssyncTasks() {
-		if (pontosDoOnibusTask != null && Status.RUNNING.equals(pontosDoOnibusTask.getStatus())) {
-			pontosDoOnibusTask.cancel(true);
-		}
-		
-		if (veiculosTask != null && Status.RUNNING.equals(veiculosTask.getStatus())) {
-			veiculosTask.cancel(true);
-		}
+		CancelableAssynTask.cancel(pontosDoOnibusTask);
+		CancelableAssynTask.cancel(veiculosTask);
 	}
 	
 	private AsyncResultDelegate<List<Veiculo>> assync = new AsyncResultDelegate<List<Veiculo>>() {

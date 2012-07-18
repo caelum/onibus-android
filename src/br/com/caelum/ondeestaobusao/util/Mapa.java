@@ -30,13 +30,6 @@ public class Mapa {
 		mapa.getController().setZoom(17);
 	}
 	
-	public void habilitaBussula() {
-		myLocationOverlay = new MyLocationOverlay(activity, mapa);
-		myLocationOverlay.enableCompass();
-		myLocationOverlay.enableMyLocation();
-		mapa.getOverlays().add(myLocationOverlay);
-	}
-	
 	public void desabilitaBussula() {
 		if (myLocationOverlay != null) {
 			myLocationOverlay.disableMyLocation();

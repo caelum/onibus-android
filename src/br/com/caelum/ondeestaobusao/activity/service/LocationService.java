@@ -12,8 +12,8 @@ import br.com.caelum.ondeestaobusao.activity.application.BusaoApplication;
 import br.com.caelum.ondeestaobusao.gps.LocationControl;
 
 public class LocationService extends Service implements LocationListener {
-	private static final long TIME = 120000;
-	private static final int DISTANCE = 5;
+	private static final long TIME = 180000;
+	private static final int DISTANCE = 20;
 	private LocationControl control;
 	private LocationManager locationManager;
 
@@ -49,8 +49,11 @@ public class LocationService extends Service implements LocationListener {
 	@Override
 	public void onLocationChanged(Location location) {
 		control.makeUseLocation(location);
+		if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
+			locationManager.removeUpdates(this);
+		}
 	}
-
+	
 	@Override
 	public void onProviderDisabled(String provider) {
 

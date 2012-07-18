@@ -25,29 +25,33 @@ public class BusaoActivity extends SherlockFragmentActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		
-		ProgressBarAdministrator progressBarAdministrator = new ProgressBarAdministrator(this);
 		application = (BusaoApplication) getApplication();
 		
 		if (savedInstanceState == null) {
-			AppRater.app_launched(this);
-			
-			application.setMapa(new Mapa(this));
 			application.setLocation(new LocationControl(this));
-
 			locationControl = new Intent(this, LocationService.class);
 			startService(locationControl);
-			
 		}
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		AppRater.app_launched(this);
+
+		application.setMapa(new Mapa(this));
+
+		ProgressBarAdministrator progressBarAdministrator = new ProgressBarAdministrator(this);
 
 		application.setProgressBar(progressBarAdministrator);
 
 		pontosProximosFragment = new PontosProximosFragment();
 
 		getSupportFragmentManager().beginTransaction()
-				.replace(R.id.fragment_main, pontosProximosFragment, pontosProximosFragment.getClass().getName())
-				.commit();
+				.replace(R.id.fragment_main, pontosProximosFragment, "pontosProximosFragment").commit();
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == android.R.id.home) {
