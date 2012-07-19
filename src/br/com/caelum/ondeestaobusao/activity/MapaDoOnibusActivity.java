@@ -158,13 +158,14 @@ public class MapaDoOnibusActivity extends SherlockMapActivity implements AsyncRe
 			VeiculosOverlay veiculosOverlay = new VeiculosOverlay(this);
 
 			veiculosOverlay.clear();
-			if (veiculos != null) {
+			if (veiculos != null && !veiculos.isEmpty()) {
 				for (Veiculo veiculo : veiculos) {
 					veiculosOverlay.addOverlay(veiculo.toOverlayItem(geoCoderUtil.getEndereco(veiculo.getLocalizacao()
 							.toGeoPoint())));
 				}
+				mapa.adicionaCamada(veiculosOverlay);
+				mapa.centralizaNa(veiculos.get(0).getLocalizacao());
 			}
-			mapa.adicionaCamada(veiculosOverlay);
 			mapa.redesenha();
 
 			progressBarAdministrator.hide();

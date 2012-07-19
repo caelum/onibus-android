@@ -3,13 +3,13 @@ package br.com.caelum.ondeestaobusao.model;
 import com.google.android.maps.OverlayItem;
 
 public class Veiculo {
-	private Localizacao localizacao;
+	private Coordenada localizacao;
 	private boolean deficientes;
 	
-	public Localizacao getLocalizacao() {
+	public Coordenada getLocalizacao() {
 		return localizacao;
 	}
-	public void setLocalizacao(Localizacao localizacao) {
+	public void setLocalizacao(Coordenada localizacao) {
 		this.localizacao = localizacao;
 	}
 	public boolean isDeficientes() {
