@@ -13,6 +13,7 @@ import br.com.caelum.ondeestaobusao.cache.Cache;
 import br.com.caelum.ondeestaobusao.constants.Extras;
 import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
 import br.com.caelum.ondeestaobusao.gps.LocationObserver;
+import br.com.caelum.ondeestaobusao.map.MyLocationOverlay;
 import br.com.caelum.ondeestaobusao.map.PontoDoOnibusOverlay;
 import br.com.caelum.ondeestaobusao.map.VeiculosOverlay;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
@@ -34,6 +35,7 @@ import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockMapActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.android.maps.MapView;
+import com.google.android.maps.OverlayItem;
 
 public class MapaDoOnibusActivity extends SherlockMapActivity implements AsyncResultDelegate<List<Ponto>>,
 		LocationObserver {
@@ -50,12 +52,14 @@ public class MapaDoOnibusActivity extends SherlockMapActivity implements AsyncRe
 	private List<Veiculo> veiculos;
 	private ProgressBarAdministrator progressBarAdministrator;
 	private Cache cache;
+	private MyLocationOverlay myLocationOverlay;
 
 	@Override
 	protected void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		setContentView(R.layout.mapa);
 		application = (BusaoApplication) getApplication();
+		geoCoderUtil = new GeoCoderUtil(this);
 	}
 	
 	@Override
@@ -113,6 +117,8 @@ public class MapaDoOnibusActivity extends SherlockMapActivity implements AsyncRe
 	@Override
 	public void callback(Coordenada coordenada) {
 		mapa.centralizaNa(coordenada);
+		myLocationOverlay = new MyLocationOverlay(this);
+		myLocationOverlay.addOverlay(new OverlayItem(coordenada.toGeoPoint(), "Minha Localização: ", geoCoderUtil.getEndereco(coordenada.toGeoPoint())));
 
 		pontosDoOnibusTask = new PontosDoOnibusTask(cache, this).execute(onibus.getId());
 		veiculosTask = new VeiculoEmTempoRealTask(assync).execute(onibus.getCodigoGPS());
@@ -140,6 +146,7 @@ public class MapaDoOnibusActivity extends SherlockMapActivity implements AsyncRe
 				}
 			}
 			mapa.adicionaCamada(pontoOverlay);
+			mapa.adicionaCamada(myLocationOverlay);
 			mapa.redesenha();
 
 			progressBarAdministrator.hide();
@@ -154,7 +161,6 @@ public class MapaDoOnibusActivity extends SherlockMapActivity implements AsyncRe
 		}
 
 		if (actionBar) {
-			geoCoderUtil = new GeoCoderUtil(this);
 			VeiculosOverlay veiculosOverlay = new VeiculosOverlay(this);
 
 			veiculosOverlay.clear();
@@ -164,6 +170,7 @@ public class MapaDoOnibusActivity extends SherlockMapActivity implements AsyncRe
 							.toGeoPoint())));
 				}
 				mapa.adicionaCamada(veiculosOverlay);
+				mapa.adicionaCamada(myLocationOverlay);
 				mapa.centralizaNa(veiculos.get(0).getLocalizacao());
 			}
 			mapa.redesenha();

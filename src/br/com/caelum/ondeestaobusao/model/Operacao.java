@@ -2,6 +2,7 @@ package br.com.caelum.ondeestaobusao.model;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class Operacao implements Serializable{
 	private String diaUtil;
 	private String sabado;

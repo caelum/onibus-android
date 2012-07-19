@@ -2,6 +2,7 @@ package br.com.caelum.ondeestaobusao.model;
 
 import java.io.Serializable;
 
+@SuppressWarnings("serial")
 public class Sentido implements Serializable {
 	private int codigo;
 	private String terminalPartida;
