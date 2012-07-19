@@ -49,9 +49,6 @@ public class LocationService extends Service implements LocationListener {
 	@Override
 	public void onLocationChanged(Location location) {
 		control.makeUseLocation(location);
-		if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
-			locationManager.removeUpdates(this);
-		}
 	}
 	
 	@Override

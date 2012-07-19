@@ -3,6 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-	<FrameLayout android:id="@+id/fragment_main" android:layout_height="fill_parent" android:layout_width="fill_parent" />
-	<include android:id="@+id/progress_bar" layout="@layout/progress_bar" android:layout_height="fill_parent" android:layout_width="fill_parent" android:layout_alignBottom="@+id/fragment_main" /> 
+
+    <br.com.caelum.ondeestaobusao.widget.PontoExpandableListView
+        android:id="@+id/listPonto"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
+
+    <include
+        android:id="@+id/progress_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_alignBottom="@+id/listPonto"
+        layout="@layout/progress_bar" />
+
 </RelativeLayout>

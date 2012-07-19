@@ -1,6 +1,8 @@
 package br.com.caelum.ondeestaobusao.model;
 
-public class Operacao {
+import java.io.Serializable;
+
+public class Operacao implements Serializable{
 	private String diaUtil;
 	private String sabado;
 	private String domingo;

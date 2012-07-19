@@ -1,6 +1,8 @@
 package br.com.caelum.ondeestaobusao.model;
 
-public class Sentido {
+import java.io.Serializable;
+
+public class Sentido implements Serializable {
 	private int codigo;
 	private String terminalPartida;
 	private String terminalSecundario;

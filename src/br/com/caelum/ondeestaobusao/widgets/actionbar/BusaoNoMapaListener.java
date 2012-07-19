@@ -1,30 +1,28 @@
 package br.com.caelum.ondeestaobusao.widgets.actionbar;
 
 import android.support.v4.app.FragmentTransaction;
-import br.com.caelum.ondeestaobusao.activity.application.BusaoApplication;
-import br.com.caelum.ondeestaobusao.fragments.MapaDoOnibusFragment;
+import br.com.caelum.ondeestaobusao.activity.MapaDoOnibusActivity;
 import br.com.caelum.ondeestaobusao.util.Mapa;
 
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.ActionBar.TabListener;
 
 public class BusaoNoMapaListener implements TabListener {
-	private final Mapa mapa;
-	private final MapaDoOnibusFragment fragment;
+	private Mapa mapa;
+	private MapaDoOnibusActivity activity;
 
-	public BusaoNoMapaListener(MapaDoOnibusFragment fragment) {
-		BusaoApplication application = (BusaoApplication) fragment.getSherlockActivity().getApplication();
-		this.fragment = fragment;
-		this.mapa = application.getMapa();
+	public BusaoNoMapaListener(MapaDoOnibusActivity activity, Mapa mapa) {
+		this.activity = activity;
+		this.mapa = mapa;
 	}
 	
 	@Override
 	public void onTabSelected(Tab tab, FragmentTransaction ft) {
 		mapa.limpa();
 		if (tab.getTag().equals(BusaoNoMapa.ITINERARIO)) {
-			fragment.exibePontosNoMapa();
+			activity.exibePontosNoMapa();
 		} else {
-			fragment.exibeVeiculosNoMapa();
+			activity.exibeVeiculosNoMapa();
 		}
 		mapa.redesenha();
 	}

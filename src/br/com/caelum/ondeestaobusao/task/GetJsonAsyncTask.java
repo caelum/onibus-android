@@ -10,6 +10,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import android.os.AsyncTask;
+import br.com.caelum.ondeestaobusao.cache.Cache;
 import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
 
 import com.google.gson.Gson;
@@ -18,11 +19,18 @@ import com.google.gson.GsonBuilder;
 public abstract class GetJsonAsyncTask<Params, Result> extends AsyncTask<Params, Void, Result> {
 	private final AsyncResultDelegate<Result> delegate;
 	private IOException exception;
+	private Cache cache;
 
 	public GetJsonAsyncTask(AsyncResultDelegate<Result> delegate) {
 		this.delegate = delegate;
+		this.cache = null;
 	}
-
+	
+	public GetJsonAsyncTask(Cache cache, AsyncResultDelegate<Result> delegate) {
+		this(delegate);
+		this.cache = cache;
+	}
+	
 	protected abstract Result onErrorReturn();
 
 	protected abstract String getFormatedURL(Params... params);
@@ -44,12 +52,27 @@ public abstract class GetJsonAsyncTask<Params, Result> extends AsyncTask<Params,
 	}
 
 	private String getJsonFromServer(Params... params) throws IOException {
+		String url = getFormatedURL(params);
+		
+		if (cache != null) {
+			String json = cache.get(url);
+			if (json != null) {
+				return json;
+			}
+		}
+		
 		HttpClient httpclient = new DefaultHttpClient();
 
-		HttpGet httpGet = new HttpGet(getFormatedURL(params));
+		HttpGet httpGet = new HttpGet(url);
 		HttpResponse response = httpclient.execute(httpGet);
-
-		return EntityUtils.toString(response.getEntity());
+		
+		String json = EntityUtils.toString(response.getEntity());
+		
+		if (cache != null) {
+			cache.addCache(url, json);
+		}
+		
+		return json;
 
 	}
 	

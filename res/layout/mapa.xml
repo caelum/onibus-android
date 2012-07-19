@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
     <com.google.android.maps.MapView
@@ -9,4 +9,9 @@
         android:apiKey="@string/google_maps_key"
         android:clickable="true"
         android:enabled="true" />
-</LinearLayout>
+    <include
+        android:id="@+id/progress_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        layout="@layout/progress_bar" />
+</RelativeLayout>

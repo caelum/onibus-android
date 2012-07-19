@@ -4,6 +4,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.caelum.ondeestaobusao.cache.Cache;
 import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
 import br.com.caelum.ondeestaobusao.model.Ponto;
 
@@ -12,8 +13,8 @@ import com.google.gson.reflect.TypeToken;
 public class PontosDoOnibusTask extends GetJsonAsyncTask<Long, List<Ponto>> {
 	private final String server_url = "http://ondeestaoalbi2.herokuapp.com/itinerarioDoOnibus.json?onibus=%s";
 	
-	public PontosDoOnibusTask(AsyncResultDelegate<List<Ponto>> delegate) {
-		super(delegate);
+	public PontosDoOnibusTask(Cache cache, AsyncResultDelegate<List<Ponto>> delegate) {
+		super(cache, delegate);
 	}
 
 	@Override

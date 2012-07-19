@@ -7,15 +7,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
-import br.com.caelum.ondeestaobusao.activity.BusaoActivity;
+import br.com.caelum.ondeestaobusao.activity.PontosProximosActivity;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
 
 public class LocationControl {
 	private Collection<LocationObserver> observers = new LinkedList<LocationObserver>();
 	private Coordenada atual;
-	private final BusaoActivity activity;
+	private final PontosProximosActivity activity;
 
-	public LocationControl(BusaoActivity busaoActivity) {
+	public LocationControl(PontosProximosActivity busaoActivity) {
 		this.activity = busaoActivity;
 	}
 
