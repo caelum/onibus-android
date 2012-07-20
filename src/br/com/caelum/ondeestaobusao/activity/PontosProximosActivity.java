@@ -56,10 +56,11 @@ public class PontosProximosActivity extends SherlockActivity implements AsyncRes
 		if (application.getLocation() == null) {
 			application.setLocation(new LocationControl(this));
 		}
-		if (locationIntent == null) {
-			locationIntent = new Intent(this, LocationService.class);
-			startService(locationIntent);
+		if (locationIntent != null) {
+			stopService(locationIntent);
 		}
+		locationIntent = new Intent(this, LocationService.class);
+		startService(locationIntent);
 
 		progressBarAdministrator = new ProgressBarAdministrator(this);
 		pontosExpandableListView = (PontoExpandableListView) findViewById(R.id.listPonto);
@@ -77,6 +78,12 @@ public class PontosProximosActivity extends SherlockActivity implements AsyncRes
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.menu_atualizar) {
+			hide();
+			progressBarAdministrator.showWithText(R.string.carregando_gps);
+			if (locationIntent != null) {
+				stopService(locationIntent);
+				startService(locationIntent);
+			}
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -156,7 +163,7 @@ public class PontosProximosActivity extends SherlockActivity implements AsyncRes
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getSupportMenuInflater().inflate(R.menu.menu_split_principal, menu);
+		getSupportMenuInflater().inflate(R.menu.menu_principal, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
 }

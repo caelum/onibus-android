@@ -33,6 +33,7 @@ import br.com.caelum.ondeestaobusao.widgets.actionbar.BusaoNoMapaListener;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
 import com.actionbarsherlock.app.SherlockMapActivity;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.android.maps.MapView;
 import com.google.android.maps.OverlayItem;
@@ -53,6 +54,7 @@ public class MapaDoOnibusActivity extends SherlockMapActivity implements AsyncRe
 	private ProgressBarAdministrator progressBarAdministrator;
 	private Cache cache;
 	private MyLocationOverlay myLocationOverlay;
+	private Coordenada coordenada;
 
 	@Override
 	protected void onCreate(Bundle bundle) {
@@ -116,7 +118,7 @@ public class MapaDoOnibusActivity extends SherlockMapActivity implements AsyncRe
 
 	@Override
 	public void callback(Coordenada coordenada) {
-		mapa.centralizaNa(coordenada);
+		this.coordenada = coordenada;
 		myLocationOverlay = new MyLocationOverlay(this);
 		myLocationOverlay.addOverlay(new OverlayItem(coordenada.toGeoPoint(), "Minha Localização: ", geoCoderUtil.getEndereco(coordenada.toGeoPoint())));
 
@@ -147,6 +149,7 @@ public class MapaDoOnibusActivity extends SherlockMapActivity implements AsyncRe
 			}
 			mapa.adicionaCamada(pontoOverlay);
 			mapa.adicionaCamada(myLocationOverlay);
+			mapa.centralizaNa(coordenada);
 			mapa.redesenha();
 
 			progressBarAdministrator.hide();
@@ -159,6 +162,8 @@ public class MapaDoOnibusActivity extends SherlockMapActivity implements AsyncRe
 		if (veiculosTask != null && veiculosTask.getStatus().equals(Status.RUNNING) && actionBar) {
 			progressBarAdministrator.showWithText(R.string.colocando_veiculos_mapa);
 		}
+		
+		mapa.limpa();
 
 		if (actionBar) {
 			VeiculosOverlay veiculosOverlay = new VeiculosOverlay(this);
@@ -171,8 +176,8 @@ public class MapaDoOnibusActivity extends SherlockMapActivity implements AsyncRe
 				}
 				mapa.adicionaCamada(veiculosOverlay);
 				mapa.adicionaCamada(myLocationOverlay);
-				mapa.centralizaNa(veiculos.get(0).getLocalizacao());
 			}
+			
 			mapa.redesenha();
 
 			progressBarAdministrator.hide();
@@ -251,7 +256,26 @@ public class MapaDoOnibusActivity extends SherlockMapActivity implements AsyncRe
 		if (item.getItemId() == android.R.id.home) {
 			onBackPressed();
 			return true;
+		} 
+		
+		if (item.getItemId() == R.id.menu_atualizar) {
+			if (!CancelableAssynTask.isRunning(veiculosTask)) {
+				boolean actionBar = verifyActionBar(BusaoNoMapa.TEMPO_REAL);
+
+				veiculosTask = new VeiculoEmTempoRealTask(assync).execute(onibus.getCodigoGPS());
+				if (veiculosTask != null && veiculosTask.getStatus().equals(Status.RUNNING) && actionBar) {
+					progressBarAdministrator.showWithText(R.string.colocando_veiculos_mapa);
+				}
+				return true;
+			}
 		}
+		
 		return super.onOptionsItemSelected(item);
 	};
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getSupportMenuInflater().inflate(R.menu.menu_refresh_busao, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
 }

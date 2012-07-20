@@ -11,7 +11,11 @@
         android:enabled="true" />
     <include
         android:id="@+id/progress_bar"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        layout="@layout/progress_bar" />
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        layout="@layout/progress_bar"
+        android:layout_alignBottom="@+id/map_view"
+        android:layout_alignLeft="@+id/map_view"
+        android:layout_alignRight="@+id/map_view"
+        android:layout_alignTop="@+id/map_view" />
 </RelativeLayout>

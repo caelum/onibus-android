@@ -10,4 +10,11 @@ public class CancelableAssynTask {
 			task.cancel(true);
 		}
 	}
+
+	public static boolean isRunning(AsyncTask<?,?,?> task) {
+		if (task != null && Status.RUNNING.equals(task.getStatus())) {
+			return true;
+		}
+		return false;
+	}
 }
