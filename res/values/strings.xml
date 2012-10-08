@@ -3,18 +3,31 @@
 
     <string name="app_name">Busão SP</string>
     <string name="busao_passa_aqui">Aqui</string>
-    <string name="carregando">Carregando…</string>
     <string name="descricao_do_icone_da_parada_onibus">Parada de Ônibus</string>
+    <string name="pontos_proximos">Pontos Próximos</string>
     <string name="lembre_me_mais_tarde">Lembre-me mais tarde.</string>
     <string name="nao_obrigado">Não, obrigado.</string>
     <string name="nos_de_seu_feedback">Feedback</string>
-    <string name="pontos_proximos">PONTOS PRÓXIMOS</string>
     <string name="procure_no_mapa">Procure no mapa</string>
     <string name="search_hint">Digite o nome da rua</string>
     <string name="search_label">Busca por endereço</string>
+    <string name="erro_localizacao_indeterminada">Não foi possivel determinar sua localização</string>
     <string name="votar_agora">Votar agora!</string>
     <string name="vote_na_app">Se você gostou do Busão SP, por favor, nos dê o seu feedback. Obrigado!</string>
     
-    <string name="google_maps_key">GERE UMA CHAVE PARA SUA APK E COLOQUE AQUI!</string>
+    <!-- carregando -->
+    <string name="carregando_gps">Buscando sua localização</string>
+    <string name="buscando_pontos_proximos">Procurando pontos próximos</string>
+    <string name="buscando_pontos_onibus">Procurando pontos do ônibus</string>
+    <string name="colocando_pontos_mapa">Colocando os pontos no mapa</string>
+    <string name="colocando_veiculos_mapa">Colocando os veículos no mapa</string>
+    
+    <string name="google_maps_key">0yPhNQnSmzXiioZFP3VoBUThU_xw_ElSZpBO5gg</string>
+    
+    <!-- Content Description -->
+    <string name="atualizar">Atualizar</string>
+    
+    <string name="tente_novamente">Tentar Novamente</string>
+    <string name="cancelar">cancelar</string>
     
 </resources>
