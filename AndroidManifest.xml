@@ -1,61 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="br.com.caelum.ondeestaobusao.activity"
-    android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionCode="3"
+    android:versionName="2.0" >
 
     <uses-sdk android:minSdkVersion="7" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
 
     <application
+        android:name=".application.BusaoApplication"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/BusaoTheme" >
         <activity
-            android:name=".StartActivity"
-            android:label="@string/app_name"
-            android:theme="@style/BusaoTheme.Splash" >
+            android:name=".PontosProximosActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MostraRotaActivity"
-            android:configChanges="orientation"
-            android:label="@string/app_name" />
-        <activity
-            android:name=".MostraPontosActivity"
-            android:configChanges="orientation"
-            android:label="@string/app_name" />
-        <activity
-            android:name=".ListPontosAndOnibusActivity"
-            android:configChanges="orientation"
-            android:label="@string/app_name"
-            android:launchMode="singleTop">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
+        <activity android:name=".MapaDoOnibusActivity"
+            android:label="@string/app_name">
+			<intent-filter>
+			    <action android:name="android.intent.action.MAIN"/>
+                <category android:name="br.com.caelum.ondeestaobusao.Mapa" />
             </intent-filter>
-
-            <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
         </activity>
-        <activity
-            android:name=".ListOnibusActivity"
-            android:configChanges="orientation"
-            android:label="@string/app_name" />
-        <activity
-            android:name=".RateMeActivity"
-            android:configChanges="orientation"
-            android:label="@string/app_name" />
+        
+        
+	    <service android:name=".service.LocationService" />
 
         <uses-library android:name="com.google.android.maps" />
     </application>
+    
 
 </manifest>

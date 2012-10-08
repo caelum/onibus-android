@@ -3,3 +3,5 @@
 bin/
 gen/
 .DS_Store
+caelum.kml
+project.properties
