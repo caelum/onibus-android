@@ -2,7 +2,7 @@
 <resources>
 
     <style name="BusaoTheme.ProgressBarBackground">
-        <item name="android:background">#96000000</item>
+        <item name="android:background">@color/background_geral</item>
     </style>
 
     <style name="BusaoTheme" parent="Theme.Sherlock">
