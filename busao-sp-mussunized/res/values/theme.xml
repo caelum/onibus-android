@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <style name="BusaoMussunizedTheme" parent="BusaoTheme">
+        <item name="actionBarStyle">@style/Widget.BusaoMussunizedTheme.ActionBar</item>
+        <item name="android:actionBarStyle">@style/Widget.BusaoMussunizedTheme.ActionBar</item>
+    </style>
+    
+    <style name="Widget.BusaoMussunizedTheme.ActionBar" parent="Widget.BusaoTheme.ActionBar">
+        <item name="background">#00DB00</item>
+        <item name="android:background">#00DB00</item>
+        
+        <item name="backgroundSplit">#00DB00</item>
+        <item name="android:backgroundSplit">#00DB00</item>
+    </style>
+
+    
+
+</resources>

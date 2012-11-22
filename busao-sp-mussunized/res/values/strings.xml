@@ -1,0 +1,31 @@
+<resources>
+
+    <string name="app_name">busao-sp-mussunized</string>
+    <string name="busao_passa_aqui">Aquizis</string>
+    <string name="descricao_do_icone_da_parada_onibus">Paradis de Ônibusis</string>
+    <string name="pontos_proximos">Pontos Próximusis</string>
+    <string name="lembre_me_mais_tarde">Lembre-me mais tardis.</string>
+    <string name="nao_obrigado">Não to afinsis.</string>
+    <string name="nos_de_seu_feedback">Feedbequis</string>
+    <string name="procure_no_mapa">Procuris no mapis</string>
+    <string name="search_hint">Digite o nome da rua</string>
+    <string name="search_label">Busca por endereço</string>
+    <string name="erro_localizacao_indeterminada">Não foi possivel determinar sua localização</string>
+    <string name="votar_agora">Votar agora!</string>
+    <string name="vote_na_app">Se você gostou do Busão SP, curte Mussum e odeia Michel Telló por favor, nos dê o seu feedback. Obrigado!</string>
+    
+    <!-- carregando -->
+    <string name="carregando_gps">Buscando sua localizaçãozis</string>
+    <string name="buscando_pontos_proximos">Procurando pontos próximusis</string>
+    <string name="buscando_pontos_onibus">Procurando pontos do ônibusis</string>
+    <string name="colocando_pontos_mapa">Colocando os pontos no mapa</string>
+    <string name="colocando_veiculos_mapa">Colocando os veículos no mapa</string>
+    
+    <string name="google_maps_key">0yPhNQnSmzXiioZFP3VoBUThU_xw_ElSZpBO5gg</string>
+    
+    <!-- Content Description -->
+    <string name="atualizar">Atualizar</string>
+    
+    <string name="tente_novamente">Tentar Novamentis</string>
+    <string name="cancelar">cancelaê cacildis!</string>
+</resources>
