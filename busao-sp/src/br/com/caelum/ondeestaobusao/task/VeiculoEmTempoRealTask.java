@@ -10,7 +10,7 @@ import br.com.caelum.ondeestaobusao.model.Veiculo;
 import com.google.gson.reflect.TypeToken;
 
 public class VeiculoEmTempoRealTask extends GetJsonAsyncTask<Integer, List<Veiculo>> {
-	private final String server_url = "http://ondeestaoalbi2.herokuapp.com/localizacoesDoOnibus.json?codigoLinha=%s";
+	private final String server_url = "localizacoesDoOnibus.json?codigoLinha=%s";
 	
 	public VeiculoEmTempoRealTask(AsyncResultDelegate<List<Veiculo>> delegate) {
 		super(delegate);
@@ -18,7 +18,7 @@ public class VeiculoEmTempoRealTask extends GetJsonAsyncTask<Integer, List<Veicu
 
 	@Override
 	public String getFormatedURL(Integer... params) {
-		return String.format(server_url, params[0]);
+		return String.format(MyServer.uriFor(server_url), params[0]);
 	}
 
 	@Override

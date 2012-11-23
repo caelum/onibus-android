@@ -8,6 +8,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
@@ -49,6 +50,8 @@ public class PontosProximosActivity extends SherlockActivity implements AsyncRes
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		AppRater.app_launched(this);
+		
+		Log.i("AAAAAA", "AKI");
 
 		application = (BusaoApplication) getApplication();
 

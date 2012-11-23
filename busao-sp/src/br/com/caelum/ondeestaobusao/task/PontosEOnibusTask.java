@@ -12,7 +12,7 @@ import br.com.caelum.ondeestaobusao.model.Ponto;
 import com.google.gson.reflect.TypeToken;
 
 public class PontosEOnibusTask extends GetJsonAsyncTask<Coordenada, List<Ponto>>{
-	private final String server_url = "http://ondeestaoalbi2.herokuapp.com/onibusesNosPontosProximos.json?lat=%s&long=%s";
+	private final String server_url = "onibusesNosPontosProximos.json?lat=%s&long=%s";
 
 	public PontosEOnibusTask(Cache cache, AsyncResultDelegate<List<Ponto>> delegate) {
 		super(cache, delegate);
@@ -21,7 +21,7 @@ public class PontosEOnibusTask extends GetJsonAsyncTask<Coordenada, List<Ponto>>
 	@Override
 	public String getFormatedURL(Coordenada... params) {
 		Coordenada coordenada = params[0];
-		return String.format(server_url, coordenada.getLatitude(), coordenada.getLongitude());
+		return String.format(MyServer.uriFor(server_url), coordenada.getLatitude(), coordenada.getLongitude());
 	}
 
 	@Override

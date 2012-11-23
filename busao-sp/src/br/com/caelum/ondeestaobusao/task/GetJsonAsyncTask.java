@@ -10,6 +10,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import android.os.AsyncTask;
+import android.util.Log;
 import br.com.caelum.ondeestaobusao.cache.Cache;
 import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
 
@@ -65,6 +66,8 @@ public abstract class GetJsonAsyncTask<Params, Result> extends AsyncTask<Params,
 
 		HttpGet httpGet = new HttpGet(url);
 		HttpResponse response = httpclient.execute(httpGet);
+		
+		Log.i("AAAAAA", url);
 		
 		String json = EntityUtils.toString(response.getEntity());
 		

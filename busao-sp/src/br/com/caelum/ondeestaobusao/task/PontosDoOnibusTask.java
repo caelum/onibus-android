@@ -11,7 +11,7 @@ import br.com.caelum.ondeestaobusao.model.Ponto;
 import com.google.gson.reflect.TypeToken;
 
 public class PontosDoOnibusTask extends GetJsonAsyncTask<Long, List<Ponto>> {
-	private final String server_url = "http://ondeestaoalbi2.herokuapp.com/itinerarioDoOnibus.json?onibus=%s";
+	private final String server_url = "itinerarioDoOnibus.json?onibus=%s";
 	
 	public PontosDoOnibusTask(Cache cache, AsyncResultDelegate<List<Ponto>> delegate) {
 		super(cache, delegate);
@@ -19,7 +19,7 @@ public class PontosDoOnibusTask extends GetJsonAsyncTask<Long, List<Ponto>> {
 
 	@Override
 	public String getFormatedURL(Long... params) {
-		return String.format(server_url, params[0]);
+		return String.format(MyServer.uriFor(server_url), params[0]);
 	}
 
 	@Override
