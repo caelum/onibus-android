@@ -6,6 +6,7 @@
 
     <br.com.caelum.ondeestaobusao.widget.PontoExpandableListView
         android:id="@+id/listPonto"
+        android:background="@color/fundo_expandable_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 

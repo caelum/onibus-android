@@ -5,4 +5,5 @@
 	<color name="fundo_onibus_expandable_list">#393939</color>
 	<color name="fundo_onibus_expandable_list_click">#33b5e5</color>
 	<color name="fundo_ponto_do_onibus_expandable_list">#002e3e</color>
+	<color name="fundo_expandable_list">@android:color/black</color>
 </resources>
