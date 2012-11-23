@@ -9,6 +9,6 @@
 	 android:angle="90"
 	 android:type="linear"
 	 />-->
-	 <solid android:color="#002e3e"/>
+	 <solid android:color="@color/fundo_ponto_do_onibus_expandable_list"/>
 	
 </shape>
