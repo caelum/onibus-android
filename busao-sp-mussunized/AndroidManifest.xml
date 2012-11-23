@@ -6,6 +6,10 @@
     <uses-sdk
         android:minSdkVersion="7"
         android:targetSdkVersion="15" />
+    
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -22,6 +26,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+        <service android:name="br.com.caelum.ondeestaobusao.activity.service.LocationService" />
+
+        <uses-library android:name="com.google.android.maps" />
+        
     </application>
 
 </manifest>
