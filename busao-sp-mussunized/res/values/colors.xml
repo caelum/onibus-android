@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<color name="background_geral">#FFF000</color>
+	<color name="background_geral">#FFAA00</color>
+	<color name="texto_onibus_expandable_list">#FFFFFF</color>
+	<color name="fundo_onibus_expandable_list">#FFF000</color>
+	<color name="fundo_onibus_expandable_list_click">#FFF888</color>
+	<color name="fundo_ponto_do_onibus_expandable_list">#FFA000</color>
+	<color name="fundo_expandable_list">#FFAA00</color>
 </resources>
