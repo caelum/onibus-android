@@ -1,6 +1,5 @@
 package br.com.caelum.ondeestaobusao.model;
 
-import com.google.android.maps.OverlayItem;
 
 public class Veiculo {
 	private Coordenada localizacao;
@@ -17,10 +16,5 @@ public class Veiculo {
 	}
 	public void setDeficientes(boolean para_deficiente) {
 		this.deficientes = para_deficiente;
-	}
-	
-	public OverlayItem toOverlayItem(String endereco) {
-		return new OverlayItem(
-				getLocalizacao().toGeoPoint(), "Localização do ônibus:", endereco);
 	}
 }

@@ -2,11 +2,10 @@ package br.com.caelum.ondeestaobusao.model;
 
 import java.io.Serializable;
 
-import com.google.android.maps.GeoPoint;
+import com.google.android.gms.maps.model.LatLng;
 
 @SuppressWarnings("serial")
 public class Coordenada implements Serializable{
-	private static final double CONVERSION_SCALE = 1E6;
 	private final Double latitude;
 	private final Double longitude;
 
@@ -15,15 +14,13 @@ public class Coordenada implements Serializable{
 		this.longitude = longitude;
 	}
 	
-	public Coordenada(GeoPoint geoPoint) {
-		this.latitude = geoPoint.getLatitudeE6()  / CONVERSION_SCALE;
-		this.longitude = geoPoint.getLongitudeE6() / CONVERSION_SCALE;
+	public Coordenada(LatLng geoPoint) {
+		this.latitude = geoPoint.latitude;
+		this.longitude = geoPoint.longitude;
 	}
 	
-	public GeoPoint toGeoPoint() {
-		Double geoLat = this.latitude*CONVERSION_SCALE;
-		Double geoLng = this.longitude*CONVERSION_SCALE;
-		return new GeoPoint(geoLat.intValue(), geoLng.intValue());
+	public LatLng toGeoPoint() {
+		return new LatLng(this.latitude,this.longitude);
 	}
 
 	@Override

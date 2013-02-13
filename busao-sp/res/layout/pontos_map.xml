@@ -3,13 +3,11 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
 
-    <com.google.android.maps.MapView
+    <View
         android:id="@+id/map_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:apiKey="@string/google_maps_key"
-        android:clickable="true"
-        android:enabled="true" android:visibility="gone" />
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/atualiza_mapa"

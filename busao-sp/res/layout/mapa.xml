@@ -2,13 +2,11 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" >
-    <com.google.android.maps.MapView
+    <View
         android:id="@+id/map_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:apiKey="@string/google_maps_key"
-        android:clickable="true"
-        android:enabled="true" />
+        />
     <include
         android:id="@+id/progress_bar"
         android:layout_width="0dp"

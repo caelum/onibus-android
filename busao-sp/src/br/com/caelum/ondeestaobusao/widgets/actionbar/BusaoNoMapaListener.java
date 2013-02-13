@@ -21,10 +21,8 @@ public class BusaoNoMapaListener implements TabListener {
 		mapa.limpa();
 		if (tab.getTag().equals(BusaoNoMapa.ITINERARIO)) {
 			activity.exibePontosNoMapa();
-			mapa.getMapView().getController().setZoom(17);
 		} else {
 			activity.exibeVeiculosNoMapa();
-			mapa.getMapView().getController().setZoom(15);
 		}
 		mapa.redesenha();
 	}

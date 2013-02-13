@@ -13,9 +13,6 @@ import br.com.caelum.ondeestaobusao.cache.Cache;
 import br.com.caelum.ondeestaobusao.constants.Extras;
 import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
 import br.com.caelum.ondeestaobusao.gps.LocationObserver;
-import br.com.caelum.ondeestaobusao.map.MyLocationOverlay;
-import br.com.caelum.ondeestaobusao.map.PontoDoOnibusOverlay;
-import br.com.caelum.ondeestaobusao.map.VeiculosOverlay;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
 import br.com.caelum.ondeestaobusao.model.Onibus;
 import br.com.caelum.ondeestaobusao.model.Ponto;
@@ -32,13 +29,11 @@ import br.com.caelum.ondeestaobusao.widgets.actionbar.BusaoNoMapaListener;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.Tab;
-import com.actionbarsherlock.app.SherlockMapActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.google.android.maps.MapView;
-import com.google.android.maps.OverlayItem;
 
-public class MapaDoOnibusActivity extends SherlockMapActivity implements AsyncResultDelegate<List<Ponto>>,
+public class MapaDoOnibusActivity extends SherlockFragmentActivity implements AsyncResultDelegate<List<Ponto>>,
 		LocationObserver {
 
 	private Mapa mapa;
@@ -53,7 +48,6 @@ public class MapaDoOnibusActivity extends SherlockMapActivity implements AsyncRe
 	private List<Veiculo> veiculos;
 	private ProgressBarAdministrator progressBarAdministrator;
 	private Cache cache;
-	private MyLocationOverlay myLocationOverlay;
 	private Coordenada coordenada;
 
 	@Override
@@ -70,10 +64,6 @@ public class MapaDoOnibusActivity extends SherlockMapActivity implements AsyncRe
 		
 		progressBarAdministrator = new ProgressBarAdministrator(this);
 		progressBarAdministrator.showWithText(R.string.colocando_pontos_mapa);
-
-
-		MapView mapView = (MapView) findViewById(R.id.map_view);
-		this.mapa = new Mapa(this, mapView);
 
 		onibus = (Onibus) getIntent().getSerializableExtra(Extras.ONIBUS);
 
@@ -111,17 +101,11 @@ public class MapaDoOnibusActivity extends SherlockMapActivity implements AsyncRe
 		actionBar.addTab(tempoReal);
 	}
 
-	@Override
-	protected boolean isRouteDisplayed() {
-		return false;
-	}
 
 	@Override
 	public void callback(Coordenada coordenada) {
-		this.coordenada = coordenada;
-		myLocationOverlay = new MyLocationOverlay(this);
-		myLocationOverlay.addOverlay(new OverlayItem(coordenada.toGeoPoint(), "Minha Localização: ", geoCoderUtil.getEndereco(coordenada.toGeoPoint())));
-
+		//TODO colocar um PIN com a nossa posicao no mapa
+		
 		pontosDoOnibusTask = new PontosDoOnibusTask(cache, this).execute(onibus.getId());
 		veiculosTask = new VeiculoEmTempoRealTask(assync).execute(onibus.getCodigoGPS());
 	}
@@ -139,16 +123,9 @@ public class MapaDoOnibusActivity extends SherlockMapActivity implements AsyncRe
 		}
 
 		if (actionBar) {
-			PontoDoOnibusOverlay pontoOverlay = new PontoDoOnibusOverlay(this);
-
-			pontoOverlay.clear();
-			if (pontos != null) {
-				for (Ponto ponto : pontos) {
-					pontoOverlay.addOverlay(ponto.toOverlayItem());
-				}
-			}
-			mapa.adicionaCamada(pontoOverlay);
-			mapa.adicionaCamada(myLocationOverlay);
+			//TODO colcor os itens no mapa
+			
+			mapa.adicionaCamada(null);
 			mapa.centralizaNa(coordenada);
 			mapa.redesenha();
 
@@ -166,20 +143,8 @@ public class MapaDoOnibusActivity extends SherlockMapActivity implements AsyncRe
 		mapa.limpa();
 
 		if (actionBar) {
-			VeiculosOverlay veiculosOverlay = new VeiculosOverlay(this);
-
-			veiculosOverlay.clear();
-			if (veiculos != null && !veiculos.isEmpty()) {
-				for (Veiculo veiculo : veiculos) {
-					veiculosOverlay.addOverlay(veiculo.toOverlayItem(geoCoderUtil.getEndereco(veiculo.getLocalizacao()
-							.toGeoPoint())));
-				}
-				mapa.adicionaCamada(veiculosOverlay);
-				mapa.adicionaCamada(myLocationOverlay);
-			}
-			
-			mapa.redesenha();
-
+			// TODO colocar veiculos no mapa
+			mapa.adicionaCamada(null);
 			progressBarAdministrator.hide();
 		}
 	}
@@ -253,10 +218,10 @@ public class MapaDoOnibusActivity extends SherlockMapActivity implements AsyncRe
 	};
 
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == android.R.id.home) {
-			onBackPressed();
-			return true;
-		} 
+//		if (item.getItemId() == android.R.id.home) {
+//			onBackPressed();
+//			return true;
+//		} 
 		
 		if (item.getItemId() == R.id.menu_atualizar) {
 			if (!CancelableAssynTask.isRunning(veiculosTask)) {

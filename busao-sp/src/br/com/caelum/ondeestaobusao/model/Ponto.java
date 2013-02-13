@@ -3,8 +3,6 @@ package br.com.caelum.ondeestaobusao.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import com.google.android.maps.OverlayItem;
-
 @SuppressWarnings("serial")
 public class Ponto implements Serializable {
 	private String nome;
@@ -22,11 +20,6 @@ public class Ponto implements Serializable {
 	public Ponto(String nome, Coordenada coordenada, ArrayList<Onibus> onibuses, String descricao, Double distancia) {
 		this(nome, coordenada, descricao, distancia);
 		this.onibuses = onibuses;
-	}
-	
-	public OverlayItem toOverlayItem() {
-		return new OverlayItem(
-				getCoordenada().toGeoPoint(), "Localização do ponto:", getDescricao());
 	}
 	
 	@Override
