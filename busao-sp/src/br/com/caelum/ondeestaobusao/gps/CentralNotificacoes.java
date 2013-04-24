@@ -4,29 +4,29 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
-import br.com.caelum.ondeestaobusao.activity.PontosProximosActivity;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
 
-public class LocationControl {
+public class CentralNotificacoes {
 	private Collection<LocationObserver> observers = new LinkedList<LocationObserver>();
 	private Coordenada atual;
-	private final PontosProximosActivity activity;
+	private final Context context;
 
-	public LocationControl(PontosProximosActivity busaoActivity) {
-		this.activity = busaoActivity;
+	public CentralNotificacoes(Context context) {
+		this.context = context;
 	}
 
 	public void makeUseLocation(Location location) {
 		if (location != null) {
 			this.atual = new Coordenada(location.getLatitude(), location.getLongitude());
 			for (LocationObserver observer : observers) {
-				observer.callback(atual);
+				observer.mudouLocalizacaoPara(atual);
 			}
 		} else {
-			AlertDialog.Builder dialog = new AlertDialog.Builder(activity);
+			AlertDialog.Builder dialog = new AlertDialog.Builder(context);
 			dialog.setTitle("Ocorreu um erro :(");
 			dialog.setMessage("Infelizmente não foi possível obter sua localização.");
 			dialog.setCancelable(true);
@@ -36,7 +36,7 @@ public class LocationControl {
 	                    public void onClick(DialogInterface dialog, int which) {
 	                        Intent gpsIntent = new Intent(
 	                                android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-	                        activity.startActivity(gpsIntent);
+	                        context.startActivity(gpsIntent);
 	                    }
 
 	                });
@@ -45,7 +45,7 @@ public class LocationControl {
 
 	                    @Override
 	                    public void onClick(DialogInterface dialog, int which) {
-	                    	activity.finish();
+	                    	//TODO ?
 	                    }
 	                });
 	        dialog.show();
@@ -54,7 +54,7 @@ public class LocationControl {
 
 	public void registerObserver(LocationObserver observer) {
 		if (atual != null) {
-			observer.callback(atual);
+			observer.mudouLocalizacaoPara(atual);
 		}
 		this.observers.add(observer);
 	}

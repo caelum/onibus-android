@@ -10,11 +10,4 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
-    <include
-        android:id="@+id/progress_bar"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_alignBottom="@+id/listPonto"
-        layout="@layout/progress_bar" />
-
 </RelativeLayout>

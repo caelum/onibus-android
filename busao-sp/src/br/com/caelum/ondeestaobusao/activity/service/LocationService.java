@@ -9,19 +9,20 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import br.com.caelum.ondeestaobusao.activity.application.BusaoApplication;
-import br.com.caelum.ondeestaobusao.gps.LocationControl;
+import br.com.caelum.ondeestaobusao.gps.CentralNotificacoes;
 
 public class LocationService extends Service implements LocationListener {
 	private static final long TIME = 180000;
 	private static final int DISTANCE = 20;
-	private LocationControl control;
+	private CentralNotificacoes control;
 	private LocationManager locationManager;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		control = ((BusaoApplication) getApplication()).getLocation();
+		control = ((BusaoApplication) getApplication()).getCentralNotificacoes();
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		
 		if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME, DISTANCE, this);
 		}

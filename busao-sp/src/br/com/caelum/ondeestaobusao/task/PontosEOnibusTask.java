@@ -11,10 +11,10 @@ import br.com.caelum.ondeestaobusao.model.Ponto;
 
 import com.google.gson.reflect.TypeToken;
 
-public class PontosEOnibusTask extends GetJsonAsyncTask<Coordenada, List<Ponto>>{
+public class PontosEOnibusTask extends GetJsonAsyncTask<Coordenada, ArrayList<Ponto>>{
 	private final String server_url = "http://ondeestaoalbi2.herokuapp.com/onibusesNosPontosProximos.json?lat=%s&long=%s";
 
-	public PontosEOnibusTask(Cache cache, AsyncResultDelegate<List<Ponto>> delegate) {
+	public PontosEOnibusTask(Cache cache, AsyncResultDelegate<ArrayList<Ponto>> delegate) {
 		super(cache, delegate);
 	}
 
@@ -30,7 +30,7 @@ public class PontosEOnibusTask extends GetJsonAsyncTask<Coordenada, List<Ponto>>
 	}
 
 	@Override
-	public List<Ponto> onErrorReturn() {
+	public ArrayList<Ponto> onErrorReturn() {
 		return new ArrayList<Ponto>();
 	}
 }
