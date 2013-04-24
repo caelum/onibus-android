@@ -3,6 +3,7 @@ package br.com.caelum.ondeestaobusao.activity;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
@@ -11,7 +12,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import br.com.caelum.ondeestaobusao.activity.application.BusaoApplication;
 import br.com.caelum.ondeestaobusao.activity.service.LocationService;
-import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
+import br.com.caelum.ondeestaobusao.eventos.EventoPontosEncontrados;
+import br.com.caelum.ondeestaobusao.eventos.PontosEncontradosContextDelegate;
 import br.com.caelum.ondeestaobusao.fragments.PontosProximosFragment;
 import br.com.caelum.ondeestaobusao.fragments.ProgressFragment;
 import br.com.caelum.ondeestaobusao.gps.CentralNotificacoes;
@@ -20,24 +22,25 @@ import br.com.caelum.ondeestaobusao.model.Coordenada;
 import br.com.caelum.ondeestaobusao.model.Ponto;
 import br.com.caelum.ondeestaobusao.task.PontosEOnibusTask;
 import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
-import br.com.caelum.ondeestaobusao.util.CancelableAssynTask;
 import br.com.caelum.ondeestaobusao.widget.AppRater;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
-public class MainActivity extends SherlockFragmentActivity implements AsyncResultDelegate<ArrayList<Ponto>>, LocationObserver  {
+public class MainActivity extends SherlockFragmentActivity implements LocationObserver, PontosEncontradosContextDelegate  {
 	private BusaoApplication application;
 	private Intent locationIntent;
 	
-	private PontosEOnibusTask task;
+	private EventoPontosEncontrados receiver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.principal);
 		AppRater.app_launched(this);
+		
+		receiver = EventoPontosEncontrados.registraObservador(this);
 		
 		application = (BusaoApplication) getApplication();
 
@@ -103,23 +106,48 @@ public class MainActivity extends SherlockFragmentActivity implements AsyncResul
 		getSupportMenuInflater().inflate(R.menu.menu_principal, menu);
 		return super.onCreateOptionsMenu(menu);
 	}
-
+	
 	@Override
-	public void dealWithResult(ArrayList<Ponto> pontos) {
-			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-			transaction.replace(R.id.principal_unico, PontosProximosFragment.comPontos(pontos), PontosProximosFragment.class.getName());
-			transaction.commit();
+	protected void onDestroy() {
+		super.onDestroy();
+		application.getCentralNotificacoes().unRegisterObserver(this);
+		receiver.unregister(application);
+	}
+	
+	@Override
+	public void mudouLocalizacaoPara(Coordenada coordenada) {
+		application.setUltimaLocalizacao(coordenada);
+		
+		FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
+		transaction.replace(R.id.principal_unico, ProgressFragment.comMensagem(R.string.buscando_pontos_proximos));
+		transaction.commit();
+		
+		criaTaskParaBuscarPontos();
+	}
+
+	private void criaTaskParaBuscarPontos() {
+		PontosEOnibusTask task = new PontosEOnibusTask(application.getCache(), MainActivity.this);
+		task.execute(application.getUltimaLocalizacao());
+		
+		application.add(task);
 	}
 
 	@Override
-	public void dealWithError() {
+	public void lidaCom(ArrayList<Ponto> pontos) {
+		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+		transaction.replace(R.id.principal_unico, PontosProximosFragment.comPontos(pontos), PontosProximosFragment.class.getName());
+		transaction.commit();
+	}
+
+	@Override
+	public void lidaComFalha(String mensagem) {
 		AlertDialog.Builder dialog = AlertDialogBuilder.builder(this);
-		dialog.setPositiveButton(this.getResources().getString(R.string.tente_novamente), new OnClickListener() {
+		dialog.setPositiveButton(mensagem, new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
-				task = new PontosEOnibusTask(application.getCache(), MainActivity.this);
-				task.execute(application.getUltimaLocalizacao());
+				
+				criaTaskParaBuscarPontos();
 			}
 		});
 		dialog.setNegativeButton(this.getResources().getString(R.string.cancelar), new OnClickListener() {
@@ -131,23 +159,9 @@ public class MainActivity extends SherlockFragmentActivity implements AsyncResul
 		});
 		dialog.show();
 	}
-	
+
 	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		application.getCentralNotificacoes().unRegisterObserver(this);
-		CancelableAssynTask.cancel(task);
-	}
-	
-	@Override
-	public void mudouLocalizacaoPara(Coordenada coordenada) {
-		application.setUltimaLocalizacao(coordenada);
-		
-		FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
-		transaction.replace(R.id.principal_unico, ProgressFragment.comMensagem(R.string.buscando_pontos_proximos));
-		transaction.commit();
-		
-		task = new PontosEOnibusTask(application.getCache(), this);
-		task.execute(coordenada);
+	public Context getContext() {
+		return this;
 	}
 }

@@ -11,23 +11,16 @@ import org.apache.http.util.EntityUtils;
 
 import android.os.AsyncTask;
 import br.com.caelum.ondeestaobusao.cache.Cache;
-import br.com.caelum.ondeestaobusao.delegate.AsyncResultDelegate;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-public abstract class GetJsonAsyncTask<Params, Result> extends AsyncTask<Params, Void, Result> {
-	private final AsyncResultDelegate<Result> delegate;
-	private IOException exception;
-	private Cache cache;
 
-	public GetJsonAsyncTask(AsyncResultDelegate<Result> delegate) {
-		this.delegate = delegate;
-		this.cache = null;
-	}
+public abstract class BaseCachedGetJsonAsyncTask<Params, Result> extends AsyncTask<Params, Void, Result> {
+	private Cache cache;
+	private TaskStatus endBackgroundStatus;
 	
-	public GetJsonAsyncTask(Cache cache, AsyncResultDelegate<Result> delegate) {
-		this(delegate);
+	public BaseCachedGetJsonAsyncTask(Cache cache) {
 		this.cache = cache;
 	}
 	
@@ -43,12 +36,17 @@ public abstract class GetJsonAsyncTask<Params, Result> extends AsyncTask<Params,
 			String json = getJsonFromServer(params);
 			GsonBuilder builder = new GsonBuilder();
 			Gson gson = builder.create();
+			endBackgroundStatus = TaskStatus.OK;
 			
 			return gson.fromJson(json, getElementType());
 		} catch (IOException e) {
-			this.exception = e;
+			endBackgroundStatus = TaskStatus.ERROR;
 			return onErrorReturn();
 		}
+	}
+	
+	public TaskStatus getEndBackgroundStatus() {
+		return endBackgroundStatus;
 	}
 
 	private String getJsonFromServer(Params... params) throws IOException {
@@ -75,15 +73,5 @@ public abstract class GetJsonAsyncTask<Params, Result> extends AsyncTask<Params,
 		return json;
 
 	}
-	
-	@Override
-	protected final void onPostExecute(Result result) {
-		if (exception == null) {
-			delegate.dealWithResult(result);
-		} else {
-			delegate.dealWithError();
-			
-		}
-	}
-
 }
+
