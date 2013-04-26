@@ -1,4 +1,4 @@
-package br.com.caelum.ondeestaobusao.eventos;
+package br.com.caelum.ondeestaobusao.evento;
 
 import android.content.Context;
 

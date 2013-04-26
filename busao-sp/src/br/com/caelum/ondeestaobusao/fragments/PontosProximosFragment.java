@@ -11,9 +11,11 @@ import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import br.com.caelum.ondeestaobusao.activity.MainActivity;
 import br.com.caelum.ondeestaobusao.activity.R;
+import br.com.caelum.ondeestaobusao.activity.application.BusaoApplication;
 import br.com.caelum.ondeestaobusao.adapter.PontosEOnibusAdapter;
 import br.com.caelum.ondeestaobusao.model.Onibus;
 import br.com.caelum.ondeestaobusao.model.Ponto;
+import br.com.caelum.ondeestaobusao.task.BuscaPontosDoOnibusTask;
 import br.com.caelum.ondeestaobusao.widget.PontoExpandableListView;
 
 public class PontosProximosFragment extends Fragment {
@@ -44,11 +46,11 @@ public class PontosProximosFragment extends Fragment {
 			public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 				Onibus onibus = pontos.get(groupPosition).getOnibuses().get(childPosition);
 
-				//TODO Criar Fragment de mapas com o esquema novo de mapas
-//				Intent intent = new Intent(getActivity(), MapaDoOnibusActivity.class);
-//				intent.putExtra(Extras.ONIBUS, onibus);
-//				startActivity(intent);pontos
-
+				BuscaPontosDoOnibusTask task = new BuscaPontosDoOnibusTask((BusaoApplication) getActivity().getApplication());
+				task.execute(onibus.getId());
+				
+				//TODO ...
+				
 				return false;
 			}
 		});

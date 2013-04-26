@@ -1,4 +1,4 @@
-package br.com.caelum.ondeestaobusao.eventos;
+package br.com.caelum.ondeestaobusao.evento.delegate;
 
 import android.content.Context;
 

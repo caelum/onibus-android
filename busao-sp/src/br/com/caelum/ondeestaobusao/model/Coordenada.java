@@ -39,7 +39,7 @@ public class Coordenada implements Serializable{
 		return location;
 	}
 	
-	public LatLng toGeoPoint() {
+	public LatLng toLatLng() {
 		return new LatLng(this.latitude,this.longitude);
 	}
 

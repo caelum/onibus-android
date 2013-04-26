@@ -1,4 +1,4 @@
-package br.com.caelum.ondeestaobusao.eventos;
+package br.com.caelum.ondeestaobusao.evento.delegate;
 
 import java.util.ArrayList;
 
@@ -6,7 +6,7 @@ import br.com.caelum.ondeestaobusao.model.Ponto;
 
 public interface PontosEncontradosDelegate {
 
-	void lidaCom(ArrayList<Ponto> pontos);
+	void lidaComPontosProximos(ArrayList<Ponto> pontos);
 
 	void lidaComFalha(String mensagem);
 

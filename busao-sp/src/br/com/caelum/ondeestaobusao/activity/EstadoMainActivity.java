@@ -5,8 +5,11 @@ import java.io.Serializable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import br.com.caelum.ondeestaobusao.activity.application.BusaoApplication;
 import br.com.caelum.ondeestaobusao.fragments.PontosProximosFragment;
+import br.com.caelum.ondeestaobusao.fragments.PontosProximosMapaFragment;
 import br.com.caelum.ondeestaobusao.fragments.ProgressFragment;
+import br.com.caelum.ondeestaobusao.model.Coordenada;
 
 public enum EstadoMainActivity implements Serializable {
 	SEM_LOCALIZACAO {
@@ -56,8 +59,15 @@ public enum EstadoMainActivity implements Serializable {
 
 		@Override
 		public EstadoMainActivity executaEvolucao(MainActivity activity) {
-			FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
-			transaction.replace(R.id.principal_unico, new PontosProximosFragment(), PontosProximosFragment.class.getName());
+			FragmentManager manager = activity.getSupportFragmentManager();
+			FragmentTransaction transaction = manager.beginTransaction();
+			
+			if (activity.isVisualizacaoMapa()) {
+				Coordenada local = ((BusaoApplication)activity.getApplication()).getUltimaLocalizacao();
+				transaction.replace(R.id.principal_unico, PontosProximosMapaFragment.novoMapa(local));
+			} else {
+				transaction.replace(R.id.principal_unico, new PontosProximosFragment(), PontosProximosFragment.class.getName());
+			}
 			transaction.commit();
 			
 			return proximo();

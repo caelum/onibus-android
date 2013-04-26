@@ -4,10 +4,9 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.content.Context;
 import br.com.caelum.ondeestaobusao.activity.R;
-import br.com.caelum.ondeestaobusao.cache.Cache;
-import br.com.caelum.ondeestaobusao.eventos.EventoPontosEncontrados;
+import br.com.caelum.ondeestaobusao.activity.application.BusaoApplication;
+import br.com.caelum.ondeestaobusao.evento.PontosProximosEncontrados;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
 import br.com.caelum.ondeestaobusao.model.Ponto;
 
@@ -15,13 +14,15 @@ import com.google.gson.reflect.TypeToken;
 
 public class PontosEOnibusTask extends BaseCachedGetJsonAsyncTask<Coordenada, ArrayList<Ponto>> implements LongRunningTask{
 	private final String server_url = "http://ondeestaoalbi2.herokuapp.com/onibusesNosPontosProximos.json?lat=%s&long=%s";
-	private Context context;
 	private String mensagemDeFalha;
+	private BusaoApplication application;
 
-	public PontosEOnibusTask(Cache cache, Context context) {
-		super(cache);
-		this.context = context;
-		this.mensagemDeFalha = context.getResources().getString(R.string.tente_novamente);
+	public PontosEOnibusTask(BusaoApplication application) {
+		super(application.getCache());
+		this.application = application;
+		this.mensagemDeFalha = this.application.getResources().getString(R.string.tente_novamente);
+		
+		application.add(this);
 	}
 
 	@Override
@@ -43,14 +44,16 @@ public class PontosEOnibusTask extends BaseCachedGetJsonAsyncTask<Coordenada, Ar
 	@Override
 	protected void onPostExecute(ArrayList<Ponto> result) {
 		if (TaskStatus.OK.equals(getEndBackgroundStatus())) {
-			EventoPontosEncontrados.notifica(context, result);
+			PontosProximosEncontrados.notifica(application, result);
 		} else {
-			EventoPontosEncontrados.notificaFalha(context, mensagemDeFalha);
+			PontosProximosEncontrados.notificaFalha(application, mensagemDeFalha);
 		}
+		application.remove(this);
 	}
 
 	@Override
 	public void cancel() {
 		this.cancel(true);
+		application.remove(this);
 	}
 }

@@ -18,11 +18,8 @@ public class BusaoApplication extends Application {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		
 		cache = new Cache();
-		
 		location = new CentralNotificacoes(this);
-		
 	}
 	
 	@Override
