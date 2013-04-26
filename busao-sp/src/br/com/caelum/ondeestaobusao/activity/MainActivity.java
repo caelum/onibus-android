@@ -8,14 +8,11 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import br.com.caelum.ondeestaobusao.activity.application.BusaoApplication;
 import br.com.caelum.ondeestaobusao.activity.service.LocationService;
+import br.com.caelum.ondeestaobusao.eventos.Evento;
 import br.com.caelum.ondeestaobusao.eventos.EventoPontosEncontrados;
 import br.com.caelum.ondeestaobusao.eventos.PontosEncontradosContextDelegate;
-import br.com.caelum.ondeestaobusao.fragments.PontosProximosFragment;
-import br.com.caelum.ondeestaobusao.fragments.ProgressFragment;
 import br.com.caelum.ondeestaobusao.gps.CentralNotificacoes;
 import br.com.caelum.ondeestaobusao.gps.LocationObserver;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
@@ -32,30 +29,46 @@ import com.actionbarsherlock.view.MenuItem;
 public class MainActivity extends SherlockFragmentActivity implements LocationObserver, PontosEncontradosContextDelegate  {
 	private BusaoApplication application;
 	private Intent locationIntent;
+	private EstadoMainActivity estadoAtual;
+	private ArrayList<Ponto> pontos;
 	
-	private EventoPontosEncontrados receiver;
+	private Evento pontosEncontrados;
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.principal);
 		AppRater.app_launched(this);
 		
-		receiver = EventoPontosEncontrados.registraObservador(this);
+		if (savedInstanceState != null) {
+			this.pontos = (ArrayList<Ponto>) savedInstanceState.getSerializable("pontos");
+			this.estadoAtual = (EstadoMainActivity) savedInstanceState.get("estado");
+		}
+		
+		pontosEncontrados = EventoPontosEncontrados.registraObservador(this);
 		
 		application = (BusaoApplication) getApplication();
 
 		application.getCentralNotificacoes().registerObserver(this);
 		
-		FragmentManager manager = getSupportFragmentManager();
+		if (estadoAtual == null) {
+			estadoAtual = EstadoMainActivity.inicio().executaEvolucao(this);
+		}
 		
-		FragmentTransaction transaction = manager.beginTransaction();
-		transaction.replace(R.id.principal_unico, ProgressFragment.comMensagem(R.string.carregando_gps));
-		transaction.commit();
+		
+		
 		
 		feioPracarai();
 
 		initializeSherlockActionBar();
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putSerializable("estado", this.estadoAtual);
+		outState.putSerializable("pontos", this.pontos);
 	}
 
 	private void feioPracarai() {
@@ -78,9 +91,8 @@ public class MainActivity extends SherlockFragmentActivity implements LocationOb
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == R.id.menu_atualizar) {
-			FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-			transaction.replace(R.id.principal_unico, ProgressFragment.comMensagem(R.string.carregando_gps));
-			transaction.commit();
+
+			estadoAtual = EstadoMainActivity.inicio().executaEvolucao(this);
 			
 			if (locationIntent != null) {
 				stopService(locationIntent);
@@ -112,26 +124,27 @@ public class MainActivity extends SherlockFragmentActivity implements LocationOb
 	protected void onDestroy() {
 		super.onDestroy();
 		application.getCentralNotificacoes().unRegisterObserver(this);
-		receiver.unregister(application);
+		pontosEncontrados.unregister(application);
 	}
 	
 	@Override
-	public void mudouLocalizacaoPara(Coordenada coordenada) {
-		MyLog.i("Nova localizacao!");
-		if (application.getUltimaLocalizacao()!= null && coordenada != null) {
-			MyLog.i("Distancia entre a localizacao anterior e a atual:"+application.getUltimaLocalizacao().distanciaEmMetrosDa(coordenada));
+	public void mudouLocalizacaoPara(Coordenada localAtual) {
+		MyLog.i("Nova localizacao!"+localAtual);
+		if (localAtual != null) {
+			Coordenada ultimoLocal = application.getUltimaLocalizacao();
+			
+			if (localAtual.suficientementeDistanteDe(ultimoLocal)) {
+				MyLog.i("Buscando pontos!"+localAtual);
+				MyLog.i("Discancia: "+(ultimoLocal == null ? "?" : Float.toString(localAtual.distanciaEmMetrosDa(ultimoLocal))));
+				
+				application.setUltimaLocalizacao(localAtual);
+				puscaPontosParaLocalizacao();
+			}
 		}
-		
-		application.setUltimaLocalizacao(coordenada);
-		
-		FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();
-		transaction.replace(R.id.principal_unico, ProgressFragment.comMensagem(R.string.buscando_pontos_proximos));
-		transaction.commit();
-		
-		criaTaskParaBuscarPontos();
 	}
 
-	private void criaTaskParaBuscarPontos() {
+	private void puscaPontosParaLocalizacao() {
+		estadoAtual = estadoAtual.executaEvolucao(this);
 		PontosEOnibusTask task = new PontosEOnibusTask(application.getCache(), MainActivity.this);
 		task.execute(application.getUltimaLocalizacao());
 		
@@ -140,9 +153,8 @@ public class MainActivity extends SherlockFragmentActivity implements LocationOb
 
 	@Override
 	public void lidaCom(ArrayList<Ponto> pontos) {
-		FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-		transaction.replace(R.id.principal_unico, PontosProximosFragment.comPontos(pontos), PontosProximosFragment.class.getName());
-		transaction.commit();
+		this.pontos = pontos;
+		estadoAtual = estadoAtual.executaEvolucao(this);
 	}
 
 	@Override
@@ -153,7 +165,7 @@ public class MainActivity extends SherlockFragmentActivity implements LocationOb
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
 				
-				criaTaskParaBuscarPontos();
+				puscaPontosParaLocalizacao();
 			}
 		});
 		dialog.setNegativeButton(this.getResources().getString(R.string.cancelar), new OnClickListener() {
@@ -169,5 +181,9 @@ public class MainActivity extends SherlockFragmentActivity implements LocationOb
 	@Override
 	public Context getContext() {
 		return this;
+	}
+
+	public ArrayList<Ponto> getPontos() {
+		return pontos;
 	}
 }

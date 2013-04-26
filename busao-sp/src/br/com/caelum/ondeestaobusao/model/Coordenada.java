@@ -21,6 +21,12 @@ public class Coordenada implements Serializable{
 		this.longitude = geoPoint.longitude;
 	}
 	
+	public boolean suficientementeDistanteDe(Coordenada outra) {
+		if (outra == null) return true;
+		
+		return distanciaEmMetrosDa(outra) > 6.0;
+	}
+	
 	public float distanciaEmMetrosDa(Coordenada outra) {
 		return this.toLocation().distanceTo(outra.toLocation());
 	}

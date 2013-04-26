@@ -10,7 +10,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import br.com.caelum.ondeestaobusao.model.Ponto;
 import br.com.caelum.ondeestaobusao.util.MyLog;
 
-public class EventoPontosEncontrados extends BroadcastReceiver{
+public class EventoPontosEncontrados extends BroadcastReceiver implements Evento{
 
 	private static final String FALHOU = "falhou";
 	private static final String MENSAGEM_FALHA = "mensagemFalha";
@@ -41,11 +41,11 @@ public class EventoPontosEncontrados extends BroadcastReceiver{
 		LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
 	}
 	
-	public static EventoPontosEncontrados registraObservador(PontosEncontradosContextDelegate delegate){
+	public static Evento registraObservador(PontosEncontradosContextDelegate delegate){
 		return registraObservador(delegate, delegate.getContext());
 	}
 	
-	public static EventoPontosEncontrados registraObservador(PontosEncontradosDelegate delegate, Context context){
+	public static Evento registraObservador(PontosEncontradosDelegate delegate, Context context){
 		EventoPontosEncontrados receiver = new EventoPontosEncontrados();
 		receiver.delegate = delegate;
 		
