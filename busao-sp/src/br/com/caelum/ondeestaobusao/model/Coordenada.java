@@ -2,6 +2,8 @@ package br.com.caelum.ondeestaobusao.model;
 
 import java.io.Serializable;
 
+import android.location.Location;
+
 import com.google.android.gms.maps.model.LatLng;
 
 @SuppressWarnings("serial")
@@ -17,6 +19,18 @@ public class Coordenada implements Serializable{
 	public Coordenada(LatLng geoPoint) {
 		this.latitude = geoPoint.latitude;
 		this.longitude = geoPoint.longitude;
+	}
+	
+	public float distanciaEmMetrosDa(Coordenada outra) {
+		return this.toLocation().distanceTo(outra.toLocation());
+	}
+	
+	public Location toLocation() {
+		Location location = new Location("gps");
+		location.setLatitude(this.latitude);
+		location.setLongitude(this.longitude);
+		
+		return location;
 	}
 	
 	public LatLng toGeoPoint() {

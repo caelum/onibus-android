@@ -22,6 +22,7 @@ import br.com.caelum.ondeestaobusao.model.Coordenada;
 import br.com.caelum.ondeestaobusao.model.Ponto;
 import br.com.caelum.ondeestaobusao.task.PontosEOnibusTask;
 import br.com.caelum.ondeestaobusao.util.AlertDialogBuilder;
+import br.com.caelum.ondeestaobusao.util.MyLog;
 import br.com.caelum.ondeestaobusao.widget.AppRater;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -116,6 +117,11 @@ public class MainActivity extends SherlockFragmentActivity implements LocationOb
 	
 	@Override
 	public void mudouLocalizacaoPara(Coordenada coordenada) {
+		MyLog.i("Nova localizacao!");
+		if (application.getUltimaLocalizacao()!= null && coordenada != null) {
+			MyLog.i("Distancia entre a localizacao anterior e a atual:"+application.getUltimaLocalizacao().distanciaEmMetrosDa(coordenada));
+		}
+		
 		application.setUltimaLocalizacao(coordenada);
 		
 		FragmentTransaction transaction = this.getSupportFragmentManager().beginTransaction();

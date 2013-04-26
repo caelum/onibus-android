@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import br.com.caelum.ondeestaobusao.model.Ponto;
+import br.com.caelum.ondeestaobusao.util.MyLog;
 
 public class EventoPontosEncontrados extends BroadcastReceiver{
 
@@ -17,14 +18,17 @@ public class EventoPontosEncontrados extends BroadcastReceiver{
 	private static final String PONTOS_ENCONTRADOS = "pontos-encontrados";
 	private static final String PONTOS_NAO_ENCONTRADOS = "pontos-nao-encontrados";
 	
-	private static PontosEncontradosDelegate delegate;
+	private PontosEncontradosDelegate delegate;
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public void onReceive(Context context, Intent intent) {
 		if (intent.getBooleanExtra(FALHOU, false)) {
+			MyLog.i("RECEBIDA MENSAGEM DE falha! para delegate"+delegate);
+			
 			delegate.lidaComFalha((String)intent.getSerializableExtra(MENSAGEM_FALHA));
 		} else {
+			MyLog.i("RECEBIDA MENSAGEM DE SUCESSO! para delegate"+delegate);
 			ArrayList<Ponto> pontos = (ArrayList<Ponto>) intent.getSerializableExtra(PONTOS);			
 			delegate.lidaCom(pontos);
 		}
@@ -43,7 +47,7 @@ public class EventoPontosEncontrados extends BroadcastReceiver{
 	
 	public static EventoPontosEncontrados registraObservador(PontosEncontradosDelegate delegate, Context context){
 		EventoPontosEncontrados receiver = new EventoPontosEncontrados();
-		EventoPontosEncontrados.delegate = delegate;
+		receiver.delegate = delegate;
 		
 		LocalBroadcastManager.getInstance(context)
 			.registerReceiver(receiver, new IntentFilter(PONTOS_ENCONTRADOS));
