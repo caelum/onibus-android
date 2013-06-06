@@ -5,17 +5,15 @@ import java.util.ArrayList;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import br.com.caelum.ondeestaobusao.activity.application.BusaoApplication;
-import br.com.caelum.ondeestaobusao.activity.service.LocationService;
 import br.com.caelum.ondeestaobusao.evento.Evento;
 import br.com.caelum.ondeestaobusao.evento.PontosProximosEncontrados;
 import br.com.caelum.ondeestaobusao.evento.delegate.PontosEncontradosContextDelegate;
-import br.com.caelum.ondeestaobusao.fragments.PontosProximosMapaFragment;
 import br.com.caelum.ondeestaobusao.gps.CentralNotificacoes;
+import br.com.caelum.ondeestaobusao.gps.LidaComLocalizacao;
 import br.com.caelum.ondeestaobusao.gps.LocationObserver;
 import br.com.caelum.ondeestaobusao.model.Coordenada;
 import br.com.caelum.ondeestaobusao.model.Ponto;
@@ -30,19 +28,21 @@ import com.actionbarsherlock.view.MenuItem;
 
 public class MainActivity extends SherlockFragmentActivity implements
 		LocationObserver, PontosEncontradosContextDelegate {
+
 	private BusaoApplication application;
-	private Intent locationIntent;
 	private EstadoMainActivity estadoAtual;
 	private ArrayList<Ponto> pontos;
 	private boolean visualizacaoMapa;
 
 	private Evento pontosEncontrados;
+	private LidaComLocalizacao localizacao;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.principal);
+
 		AppRater.app_launched(this);
 
 		if (savedInstanceState != null) {
@@ -50,22 +50,39 @@ public class MainActivity extends SherlockFragmentActivity implements
 					.getSerializable("pontos");
 			this.estadoAtual = (EstadoMainActivity) savedInstanceState
 					.get("estado");
-			this.visualizacaoMapa = savedInstanceState.getBoolean("visualizacaoEmMapa", false);
+			this.visualizacaoMapa = savedInstanceState.getBoolean(
+					"visualizacaoEmMapa", false);
 		}
-
-		pontosEncontrados = PontosProximosEncontrados.registraObservador(this);
 
 		application = (BusaoApplication) getApplication();
 
-		application.getCentralNotificacoes().registerObserver(this);
+		if (application.getCentralNotificacoes() == null) {
+			application.setCentralNotificacoes(new CentralNotificacoes(this));
+		}
+
+		localizacao = new LidaComLocalizacao(this);
 
 		if (estadoAtual == null) {
 			estadoAtual = EstadoMainActivity.inicio().executaEvolucao(this);
 		}
 
-		feioPracarai();
-
 		initializeSherlockActionBar();
+		
+		application.getCentralNotificacoes().registerObserver(this);
+		pontosEncontrados = PontosProximosEncontrados.registraObservador(this);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		localizacao.start();
+	}
+
+	@Override
+	protected void onStop() {
+		localizacao.stop();
+//		application.setUltimaLocalizacao(null);
+		super.onStop();
 	}
 
 	@Override
@@ -74,25 +91,6 @@ public class MainActivity extends SherlockFragmentActivity implements
 		outState.putSerializable("estado", this.estadoAtual);
 		outState.putSerializable("pontos", this.pontos);
 		outState.putBoolean("visualizacaoEmMapa", this.visualizacaoMapa);
-	}
-
-	private void feioPracarai() {
-		if (application.getCentralNotificacoes() == null) {
-			application.setCentralNotificacoes(new CentralNotificacoes(this));
-		}
-		restartLocationService();
-	}
-
-	private void restartLocationService() {
-		stopLocationService();
-		locationIntent = new Intent(this, LocationService.class);
-		startService(locationIntent);
-	}
-
-	private void stopLocationService() {
-		if (locationIntent != null) {
-			stopService(locationIntent);
-		}
 	}
 
 	private void initializeSherlockActionBar() {
@@ -108,31 +106,23 @@ public class MainActivity extends SherlockFragmentActivity implements
 		case R.id.menu_atualizar:
 			estadoAtual = EstadoMainActivity.inicio().executaEvolucao(this);
 
-			restartLocationService();
 			break;
-			
-		case R.id.menu_mapa_onibus_proximos: 
+
+		case R.id.menu_mapa_onibus_proximos:
 			this.visualizacaoMapa = !this.visualizacaoMapa;
 			estadoAtual = estadoAtual.executaEvolucao(this);
-			
+
 			break;
-			
+
 		default:
 			break;
 		}
 
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	public boolean isVisualizacaoMapa() {
 		return visualizacaoMapa;
-	}
-	
-	@Override
-	protected void onStop() {
-		super.onStop();
-		stopLocationService();
-		locationIntent = null;
 	}
 
 	@Override
@@ -150,13 +140,11 @@ public class MainActivity extends SherlockFragmentActivity implements
 
 	@Override
 	public void mudouLocalizacaoPara(Coordenada localAtual) {
-		stopLocationService();
-		
 		MyLog.i("Nova localizacao!" + localAtual);
 		if (localAtual != null) {
 			Coordenada ultimoLocal = application.getUltimaLocalizacao();
-
-			if (localAtual.suficientementeDistanteDe(ultimoLocal)) {
+			
+			if (pontos == null || localAtual.suficientementeDistanteDe(ultimoLocal)) {
 				MyLog.i("Buscando pontos!" + localAtual);
 				MyLog.i("Discancia: "
 						+ (ultimoLocal == null ? "?" : Float
@@ -212,4 +200,10 @@ public class MainActivity extends SherlockFragmentActivity implements
 	public ArrayList<Ponto> getPontos() {
 		return pontos;
 	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		localizacao.onActivityResult(requestCode, resultCode, data);
+	}
+
 }

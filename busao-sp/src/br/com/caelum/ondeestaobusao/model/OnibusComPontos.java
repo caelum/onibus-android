@@ -3,6 +3,7 @@ package br.com.caelum.ondeestaobusao.model;
 import java.io.Serializable;
 import java.util.List;
 
+@SuppressWarnings("serial")
 public class OnibusComPontos implements Serializable {
 	private Onibus onibus;
 	private List<Ponto> pontos;
